@@ -1,0 +1,91 @@
+<div class="login-container">
+    <app-card [variant]="'elevated'" [padding]="'none'" class="login-card">
+        <app-card-header class="logo-section">
+            <div class="logo-container">
+                <img class="logo-icon" src="logo.png" />
+                <h1 class="brand-name">Ship In</h1>
+            </div>
+            <p class="brand-description">
+                Track, manage, and deliver with confidence
+            </p>
+        </app-card-header>
+
+        <app-card-content class="login-form">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <h2 class="form-title">Welcome Back</h2>
+                <p class="form-subtitle">Please sign in to continue</p>
+
+                @if (errorMessage()) {
+                <app-alert [variant]="'error'" class="error-alert">
+                    {{ errorMessage() }}
+                </app-alert>
+                }
+
+                <div class="form-group">
+                    <app-input
+                        [id]="'username'"
+                        [type]="'text'"
+                        [label]="'Username'"
+                        [placeholder]="'Enter your username'"
+                        [iconLeft]="'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'"
+                        [error]="getFieldError('username')"
+                        [(value)]="username"
+                        (blurred)="updateUsername(username())"
+                    ></app-input>
+                </div>
+
+                <div class="form-group">
+                    <app-input
+                        [id]="'password'"
+                        [type]="'password'"
+                        [label]="'Password'"
+                        [placeholder]="'Enter your password'"
+                        [iconLeft]="'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'"
+                        [error]="getFieldError('password')"
+                        [(value)]="password"
+                        (blurred)="updatePassword(password())"
+                    ></app-input>
+                </div>
+
+                <div class="forgot-password">
+                    <app-link
+                        [href]="'#'"
+                        [variant]="'primary'"
+                        [size]="'md'"
+                        class="forgot-link"
+                    >
+                        Forgot password?
+                    </app-link>
+                </div>
+
+                <app-button
+                    [type]="'submit'"
+                    [variant]="'primary'"
+                    [size]="'lg'"
+                    [fullWidth]="true"
+                    [loading]="isLoading()"
+                    [iconRight]="
+                        isLoading()
+                            ? ''
+                            : 'M13 7l5 5m0 0l-5 5m5-5H6'
+                    "
+                    class="submit-button"
+                >
+                    @if (isLoading()) { Signing in... } @else { Sign In }
+                </app-button>
+
+                <div class="signup-section">
+                    <span class="signup-text">Don't have an account?</span>
+                    <app-link
+                        [href]="'#'"
+                        [variant]="'primary'"
+                        [size]="'md'"
+                        class="signup-link"
+                    >
+                        Sign Up
+                    </app-link>
+                </div>
+            </form>
+        </app-card-content>
+    </app-card>
+</div>

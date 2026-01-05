@@ -1,0 +1,159 @@
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--secondary);
+    font-family: var(--font-sans);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 450px;
+    animation: none;
+}
+
+.logo-section {
+    padding: 40px 40px 0 40px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.logo-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.brand-name {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--foreground);
+    margin: 0;
+}
+
+.brand-description {
+    font-size: 14px;
+    color: var(--muted-foreground);
+    font-weight: 400;
+    margin: 0;
+}
+
+.login-form {
+    padding: 40px;
+}
+
+.login-form form {
+    width: 100%;
+}
+
+.form-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--foreground);
+    margin: 0 0 8px 0;
+}
+
+.form-subtitle {
+    font-size: 14px;
+    color: var(--muted-foreground);
+    margin: 0 0 30px 0;
+}
+
+.error-alert {
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-bottom: 24px;
+}
+
+.submit-button {
+    margin-bottom: 24px;
+}
+
+.signup-section {
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+}
+
+.signup-text {
+    font-size: 14px;
+    color: var(--muted-foreground);
+    margin-right: 6px;
+}
+
+@media (max-width: 640px) {
+    .login-container {
+        padding: 16px;
+    }
+
+    .login-card {
+        max-width: 100%;
+    }
+
+    .logo-section {
+        padding: 32px 24px 24px;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .brand-name {
+        font-size: 28px;
+    }
+
+    .brand-description {
+        font-size: 13px;
+    }
+
+    .login-form {
+        padding: 32px 24px;
+    }
+
+    .form-title {
+        font-size: 24px;
+    }
+
+    .form-subtitle {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 380px) {
+    .logo-section {
+        padding: 24px 20px 20px;
+    }
+
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .brand-name {
+        font-size: 24px;
+    }
+
+    .login-form {
+        padding: 24px 20px;
+    }
+
+    .form-title {
+        font-size: 22px;
+    }
+}
