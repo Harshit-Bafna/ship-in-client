@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 type AlertVariant = 'info' | 'success' | 'warning' | 'error';
@@ -8,6 +8,7 @@ type AlertVariant = 'info' | 'success' | 'warning' | 'error';
     standalone: true,
     imports: [CommonModule],
     template: `
+        @if (!isDismissed()) {
         <div [class]="getAlertClasses()" role="alert">
             <div class="alert-icon">
                 @if (variant() === 'success') {
@@ -57,6 +58,7 @@ type AlertVariant = 'info' | 'success' | 'warning' | 'error';
                 class="alert-close"
                 (click)="handleDismiss()"
                 aria-label="Close alert"
+                type="button"
             >
                 <svg fill="currentColor" viewBox="0 0 20 20">
                     <path
@@ -68,6 +70,7 @@ type AlertVariant = 'info' | 'success' | 'warning' | 'error';
             </button>
             }
         </div>
+        }
     `,
     styles: [
         `
@@ -170,11 +173,14 @@ export class AlertComponent {
 
     dismissed = output<void>();
 
+    isDismissed = signal(false);
+
     getAlertClasses(): string {
         return `alert-base alert-${this.variant()}`;
     }
 
     handleDismiss(): void {
+        this.isDismissed.set(true);
         this.dismissed.emit();
     }
 }
