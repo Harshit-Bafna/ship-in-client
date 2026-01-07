@@ -5,6 +5,43 @@
     </header>
 
     <main class="app-content">
+        <!-- Avatars Section -->
+        <section class="component-section">
+            <h2 class="section-title">Avatars</h2>
+            <app-card>
+                <app-card-content>
+                    <div class="component-grid">
+                        <div class="component-demo">
+                            <h3>Sizes</h3>
+                            <div class="demo-row">
+                                <app-avatar size="xs" initials="XS" />
+                                <app-avatar size="sm" initials="SM" />
+                                <app-avatar size="md" initials="MD" />
+                                <app-avatar size="lg" initials="LG" />
+                                <app-avatar size="xl" initials="XL" />
+                            </div>
+                        </div>
+                        <div class="component-demo">
+                            <h3>Shapes</h3>
+                            <div class="demo-row">
+                                <app-avatar shape="circle" initials="JD" />
+                                <app-avatar shape="square" initials="JD" />
+                            </div>
+                        </div>
+                        <div class="component-demo">
+                            <h3>With Status</h3>
+                            <div class="demo-row">
+                                <app-avatar initials="ON" status="online" />
+                                <app-avatar initials="BU" status="busy" />
+                                <app-avatar initials="AW" status="away" />
+                                <app-avatar initials="OF" status="offline" />
+                            </div>
+                        </div>
+                    </div>
+                </app-card-content>
+            </app-card>
+        </section>
+
         <!-- Buttons Section -->
         <section class="component-section">
             <h2 class="section-title">Buttons</h2>
@@ -292,110 +329,12 @@
             </app-card>
         </section>
 
-        <!-- Avatars Section -->
-        <section class="component-section">
-            <h2 class="section-title">Avatars</h2>
-            <app-card>
-                <app-card-content>
-                    <div class="component-grid">
-                        <div class="component-demo">
-                            <h3>Sizes</h3>
-                            <div class="demo-row">
-                                <app-avatar size="xs" initials="XS" />
-                                <app-avatar size="sm" initials="SM" />
-                                <app-avatar size="md" initials="MD" />
-                                <app-avatar size="lg" initials="LG" />
-                                <app-avatar size="xl" initials="XL" />
-                            </div>
-                        </div>
-                        <div class="component-demo">
-                            <h3>Shapes</h3>
-                            <div class="demo-row">
-                                <app-avatar shape="circle" initials="JD" />
-                                <app-avatar shape="square" initials="JD" />
-                            </div>
-                        </div>
-                        <div class="component-demo">
-                            <h3>With Status</h3>
-                            <div class="demo-row">
-                                <app-avatar initials="ON" status="online" />
-                                <app-avatar initials="BU" status="busy" />
-                                <app-avatar initials="AW" status="away" />
-                                <app-avatar initials="OF" status="offline" />
-                            </div>
-                        </div>
-                        <div class="component-demo">
-                            <h3>Avatar Group</h3>
-                            <app-avatar-group [max]="3" [excess]="2">
-                                <app-avatar initials="JD" />
-                                <app-avatar initials="AS" />
-                                <app-avatar initials="BJ" />
-                            </app-avatar-group>
-                        </div>
-                    </div>
-                </app-card-content>
-            </app-card>
-        </section>
-
         <!-- Form Controls Section -->
         <section class="component-section">
             <h2 class="section-title">Form Controls</h2>
             <app-card>
                 <app-card-content>
                     <div class="component-grid">
-                        <div class="component-demo">
-                            <h3>Checkbox</h3>
-                            <app-checkbox
-                                label="Accept terms and conditions"
-                                description="You must accept the terms to continue"
-                                [(checked)]="checkboxValue"
-                            />
-                            <app-checkbox
-                                label="Subscribe to newsletter"
-                                size="sm"
-                            />
-                            <app-checkbox
-                                label="Disabled checkbox"
-                                [disabled]="true"
-                            />
-                        </div>
-                        <div class="component-demo">
-                            <h3>Radio</h3>
-                            <app-radio-group
-                                label="Select an option"
-                                orientation="vertical"
-                            >
-                                <app-radio
-                                    name="options"
-                                    value="option1"
-                                    label="Option 1"
-                                    description="This is the first option"
-                                    [(selectedValue)]="radioValue"
-                                />
-                                <app-radio
-                                    name="options"
-                                    value="option2"
-                                    label="Option 2"
-                                    description="This is the second option"
-                                    [(selectedValue)]="radioValue"
-                                />
-                                <app-radio
-                                    name="options"
-                                    value="option3"
-                                    label="Option 3"
-                                    [(selectedValue)]="radioValue"
-                                />
-                            </app-radio-group>
-                        </div>
-                        <div class="component-demo">
-                            <h3>Switch</h3>
-                            <app-switch
-                                label="Enable notifications"
-                                description="Receive email notifications"
-                                [(checked)]="switchValue"
-                            />
-                            <app-switch label="Dark mode" size="sm" />
-                        </div>
                         <div class="component-demo">
                             <h3>Select</h3>
                             <app-select
@@ -508,9 +447,6 @@
                                 <app-link iconRight="M13 7l5 5m0 0l-5 5m5-5H6">
                                     Continue
                                 </app-link>
-                                <app-link [external]="true">
-                                    External Link
-                                </app-link>
                             </div>
                         </div>
                     </div>
@@ -526,51 +462,6 @@
                     <div class="component-demo">
                         <p>Content above divider</p>
                         <app-divider />
-                        <p>Content below divider</p>
-                        <app-divider label="OR" />
-                        <p>Content with label</p>
-                        <app-divider [dashed]="true" />
-                        <p>Dashed divider</p>
-                    </div>
-                </app-card-content>
-            </app-card>
-        </section>
-
-        <!-- Tooltip Section -->
-        <section class="component-section">
-            <h2 class="section-title">Tooltips</h2>
-            <app-card>
-                <app-card-content>
-                    <div class="component-grid">
-                        <div class="component-demo">
-                            <h3>Positions</h3>
-                            <div class="demo-row">
-                                <app-tooltip
-                                    content="Top tooltip"
-                                    position="top"
-                                >
-                                    <app-button size="sm">Top</app-button>
-                                </app-tooltip>
-                                <app-tooltip
-                                    content="Bottom tooltip"
-                                    position="bottom"
-                                >
-                                    <app-button size="sm">Bottom</app-button>
-                                </app-tooltip>
-                                <app-tooltip
-                                    content="Left tooltip"
-                                    position="left"
-                                >
-                                    <app-button size="sm">Left</app-button>
-                                </app-tooltip>
-                                <app-tooltip
-                                    content="Right tooltip"
-                                    position="right"
-                                >
-                                    <app-button size="sm">Right</app-button>
-                                </app-tooltip>
-                            </div>
-                        </div>
                     </div>
                 </app-card-content>
             </app-card>
@@ -658,98 +549,6 @@
             </app-card>
         </section>
 
-        <!-- Accordion Section -->
-        <section class="component-section">
-            <h2 class="section-title">Accordion</h2>
-            <app-card>
-                <app-card-content>
-                    <div class="component-demo">
-                        <h3>Default Accordion</h3>
-                        <app-accordion>
-                            <app-accordion-item
-                                title="What is your return policy?"
-                                [defaultOpen]="true"
-                            >
-                                Our return policy allows you to return items
-                                within 30 days of purchase for a full refund.
-                                Items must be in original condition with tags
-                                attached.
-                            </app-accordion-item>
-                            <app-accordion-item
-                                title="How long does shipping take?"
-                            >
-                                Standard shipping typically takes 5-7 business
-                                days. Express shipping options are available for
-                                2-3 day delivery.
-                            </app-accordion-item>
-                            <app-accordion-item
-                                title="Do you offer international shipping?"
-                            >
-                                Yes, we ship to most countries worldwide.
-                                Shipping costs and delivery times vary by
-                                location.
-                            </app-accordion-item>
-                        </app-accordion>
-                    </div>
-                    <div class="component-demo">
-                        <h3>Flush Accordion</h3>
-                        <app-accordion [flush]="true">
-                            <app-accordion-item
-                                title="Account Settings"
-                                [bordered]="true"
-                            >
-                                Manage your account settings, password, and
-                                security preferences.
-                            </app-accordion-item>
-                            <app-accordion-item
-                                title="Privacy & Data"
-                                [bordered]="true"
-                            >
-                                Control your privacy settings and data sharing
-                                preferences.
-                            </app-accordion-item>
-                            <app-accordion-item
-                                title="Notifications"
-                                [bordered]="true"
-                            >
-                                Configure email, push, and SMS notification
-                                preferences.
-                            </app-accordion-item>
-                        </app-accordion>
-                    </div>
-                </app-card-content>
-            </app-card>
-        </section>
-
-        <!-- Breadcrumb Section -->
-        <section class="component-section">
-            <h2 class="section-title">Breadcrumbs</h2>
-            <app-card>
-                <app-card-content>
-                    <div class="component-grid">
-                        <div class="component-demo">
-                            <h3>Default Breadcrumb</h3>
-                            <app-breadcrumb [items]="breadcrumbItems" />
-                        </div>
-                        <div class="component-demo">
-                            <h3>With Slash Separator</h3>
-                            <app-breadcrumb
-                                [items]="breadcrumbItems"
-                                separator="slash"
-                            />
-                        </div>
-                        <div class="component-demo">
-                            <h3>Small Size</h3>
-                            <app-breadcrumb
-                                [items]="breadcrumbItems"
-                                size="sm"
-                            />
-                        </div>
-                    </div>
-                </app-card-content>
-            </app-card>
-        </section>
-
         <!-- Skeleton Section -->
         <section class="component-section">
             <h2 class="section-title">Skeleton Loaders</h2>
@@ -828,23 +627,3 @@
         </section>
     </main>
 </div>
-
-<app-modal [isOpen]="isModalOpen()" size="md" (closed)="closeModal()">
-    <app-modal-header>
-        <app-modal-title>Confirm Action</app-modal-title>
-    </app-modal-header>
-    <app-modal-body>
-        <p>
-            Are you sure you want to proceed with this action? This cannot be
-            undone.
-        </p>
-    </app-modal-body>
-    <app-modal-footer>
-        <app-button variant="secondary" (clicked)="closeModal()"
-            >Cancel</app-button
-        >
-        <app-button variant="primary" (clicked)="closeModal()"
-            >Confirm</app-button
-        >
-    </app-modal-footer>
-</app-modal>

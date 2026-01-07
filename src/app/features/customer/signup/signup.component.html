@@ -2,7 +2,7 @@
     <app-card [variant]="'elevated'" [padding]="'none'" class="signup-card">
         <app-card-header class="logo-section">
             <div class="logo-container">
-                <img class="logo-icon" src="logo.png" />
+                <img class="logo-icon" src="logo.svg" />
                 <h1 class="brand-name">Ship In</h1>
             </div>
             <p class="brand-description">
@@ -127,7 +127,7 @@
 
                 <app-divider class="section-divider"></app-divider>
 
-                <div class="form-section">
+                <div class="form-section form-section-2">
                     <h3 class="section-title">Address Details</h3>
 
                     <div class="form-row">
@@ -276,7 +276,7 @@
                 <div class="signin-section">
                     <span class="signin-text">Already have an account?</span>
                     <app-link
-                        [href]="'#'"
+                        [routerLink]="'/login'"
                         [variant]="'primary'"
                         [size]="'md'"
                         class="signin-link"

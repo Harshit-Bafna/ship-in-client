@@ -12,7 +12,7 @@ export interface FooterSection {
     standalone: true,
     imports: [CommonModule, LinkComponent],
     templateUrl: './footer.component.html',
-    styleUrl: './footer.component.css', 
+    styleUrl: './footer.component.css',
 })
 export class FooterComponent {
     sections = input<FooterSection[]>([]);

@@ -1,1 +1,55 @@
-<p>button works!</p>
+<!-- <button
+    [type]="type()"
+    [disabled]="disabled() || loading()"
+    [class]="getButtonClasses()"
+    (click)="handleClick($event)"
+> -->
+<button
+    [type]="type()"
+    [disabled]="disabled() || loading()"
+    [class]="getButtonClasses()"
+>
+    @if (loading()) {
+    <svg class="btn-spinner" viewBox="0 0 24 24">
+        <circle
+            class="spinner-circle"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+            fill="none"
+        />
+    </svg>
+    } @if (iconLeft() && !loading()) {
+    <svg
+        class="btn-icon-left"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+    >
+        <path
+            [attr.d]="iconLeft()"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+        />
+    </svg>
+    }
+    <span class="btn-text"><ng-content></ng-content></span>
+    @if (iconRight() && !loading()) {
+    <svg
+        class="btn-icon-right"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+    >
+        <path
+            [attr.d]="iconRight()"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+        />
+    </svg>
+    }
+</button>

@@ -1,19 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-    AccordionComponent,
-    AccordionItemComponent,
-} from '../../shared/components/accordian/accordian.component';
 import { AlertComponent } from '../../shared/components/alert/alert.component';
-import {
-    AvatarComponent,
-    AvatarGroupComponent,
-} from '../../shared/components/avatar/avatar.component';
+import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
-import {
-    BreadcrumbComponent,
-    BreadcrumbItem,
-} from '../../shared/components/breadcrumb/breadcrumb.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import {
     CardComponent,
@@ -23,22 +12,10 @@ import {
     CardContentComponent,
     CardFooterComponent,
 } from '../../shared/components/card/card.component';
-import { CheckboxComponent } from '../../shared/components/checkbox/checkbox.component';
 import { DividerComponent } from '../../shared/components/divider/divider.component';
 import { InputComponent } from '../../shared/components/input/input.component';
 import { LinkComponent } from '../../shared/components/link/link.component';
-import {
-    ModalComponent,
-    ModalHeaderComponent,
-    ModalTitleComponent,
-    ModalBodyComponent,
-    ModalFooterComponent,
-} from '../../shared/components/modal/modal.component';
 import { ProgressComponent } from '../../shared/components/progress/progress.component';
-import {
-    RadioComponent,
-    RadioGroupComponent,
-} from '../../shared/components/radio/radio.component';
 import {
     SelectComponent,
     SelectOption,
@@ -48,7 +25,6 @@ import {
     SkeletonCardComponent,
 } from '../../shared/components/skeleton/skeleton.component';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
-import { SwitchComponent } from '../../shared/components/switch/switch.component';
 import {
     TableComponent,
     TableColumn,
@@ -58,7 +34,6 @@ import {
     TabComponent,
 } from '../../shared/components/tabs/tabs.component';
 import { TextareaComponent } from '../../shared/components/textarea/textarea.component';
-import { TooltipComponent } from '../../shared/components/tooltip/tooltip.component';
 
 @Component({
     selector: 'app-root',
@@ -79,25 +54,11 @@ import { TooltipComponent } from '../../shared/components/tooltip/tooltip.compon
         SpinnerComponent,
         DividerComponent,
         AvatarComponent,
-        AvatarGroupComponent,
-        CheckboxComponent,
-        RadioComponent,
-        RadioGroupComponent,
-        SwitchComponent,
         TextareaComponent,
         SelectComponent,
         ProgressComponent,
-        TooltipComponent,
-        ModalComponent,
-        ModalHeaderComponent,
-        ModalTitleComponent,
-        ModalBodyComponent,
-        ModalFooterComponent,
         TabsComponent,
         TabComponent,
-        AccordionComponent,
-        AccordionItemComponent,
-        BreadcrumbComponent,
         SkeletonComponent,
         SkeletonCardComponent,
         TableComponent,
@@ -126,17 +87,6 @@ export class ComponentTestingComponent {
         { label: 'Canada', value: 'ca' },
         { label: 'Australia', value: 'au' },
         { label: 'India', value: 'in' },
-    ];
-
-    breadcrumbItems: BreadcrumbItem[] = [
-        {
-            label: 'Home',
-            url: '/',
-            icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
-        },
-        { label: 'Projects', url: '/projects' },
-        { label: 'Design System', url: '/projects/design' },
-        { label: 'Components' },
     ];
 
     tableColumns: TableColumn[] = [

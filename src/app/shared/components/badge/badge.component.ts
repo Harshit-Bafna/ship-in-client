@@ -1,5 +1,4 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 type BadgeVariant =
     | 'default'
@@ -15,7 +14,7 @@ type BadgeSize = 'sm' | 'md' | 'lg';
 @Component({
     selector: 'app-badge',
     standalone: true,
-    imports: [CommonModule],
+    imports: [],
     template: `
         <span [class]="getBadgeClasses()">
             @if (icon()) {

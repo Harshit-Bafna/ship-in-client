@@ -98,6 +98,10 @@
     margin: 32px 0;
 }
 
+.form-section-2 {
+    margin-top: 32px;
+}
+
 .form-group {
     margin-bottom: 20px;
     flex: 1;

@@ -13,11 +13,11 @@ import { NavbarComponent, NavItem } from '../../header/navbar.component';
 })
 export class CustomerLayoutComponent {
     navItems = input<NavItem[]>([
-        { label: 'Home', route: '/' },
-        { label: 'New Booking', route: '/new-booking' },
-        { label: 'Track Shipment', route: '/track' },
-        { label: 'Booking History', route: '/history' },
-        { label: 'Support', route: '/support' },
+        { label: 'Home', route: '/customer' },
+        { label: 'New Booking', route: '/customer/new-booking' },
+        { label: 'Track Shipment', route: '/customer/tracking' },
+        { label: 'Booking History', route: '/customer/history' },
+        { label: 'Support', route: '/customer/support' },
     ]);
 
     footerSections = input<FooterSection[]>([

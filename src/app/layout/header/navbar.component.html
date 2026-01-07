@@ -2,14 +2,19 @@
     <div class="navbar-container">
         <!-- BRAND -->
         <div class="navbar-brand">
-            <img src="logo.png" class="brand-icon" alt="Logo" />
+            <img src="logo.svg" class="brand-icon" alt="Logo" />
             <span class="brand-name">Ship In</span>
         </div>
 
         <!-- MENU -->
         <div class="navbar-menu" [class.navbar-menu-open]="isMobileMenuOpen()">
             @for (item of navItems(); track item.route) {
-            <app-link class="nav-link" variant="default" size="md">
+            <app-link
+                class="nav-link"
+                variant="default"
+                size="md"
+                [routerLink]="item.route"
+            >
                 {{ item.label }}
             </app-link>
             }

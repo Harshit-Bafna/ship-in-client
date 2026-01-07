@@ -8,9 +8,7 @@ import {
     CardComponent,
     CardHeaderComponent,
     CardTitleComponent,
-    CardDescriptionComponent,
     CardContentComponent,
-    CardFooterComponent,
 } from '../../../shared/components/card/card.component';
 import { AlertComponent } from '../../../shared/components/alert/alert.component';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';

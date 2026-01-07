@@ -28,11 +28,11 @@ export class NavbarComponent {
     isMobileMenuOpen = signal(false);
 
     toggleUserMenu(): void {
-        this.isUserMenuOpen.update(v => !v);
+        this.isUserMenuOpen.update((v) => !v);
     }
 
     toggleMobileMenu(): void {
-        this.isMobileMenuOpen.update(v => !v);
+        this.isMobileMenuOpen.update((v) => !v);
     }
 
     handleMyProfile(): void {
