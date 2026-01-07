@@ -1,0 +1,121 @@
+.footer {
+    background: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+}
+
+/* Container */
+.footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 48px 24px 24px;
+}
+
+/* =========================
+   DESKTOP (DEFAULT)
+   About | Quick Links | Support  → ROW
+========================= */
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 32px;
+}
+
+/* Sections */
+.footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* About */
+.footer-about {
+    max-width: 320px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.brand-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--primary);
+}
+
+.brand-name {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--foreground);
+    letter-spacing: -0.5px;
+}
+
+.footer-description {
+    font-size: 14px;
+    color: var(--muted-foreground);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Titles & Links */
+.footer-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--foreground);
+    margin: 0 0 16px 0;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* =========================
+   TABLET (≤ 1024px)
+   Quick Links | Support → ROW
+   About → NEXT ROW
+========================= */
+@media (max-width: 1024px) {
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+    }
+
+    .footer-about {
+        grid-column: 1 / -1;
+        max-width: 100%;
+    }
+}
+
+/* =========================
+   MOBILE (≤ 600px)
+   All sections → COLUMN
+========================= */
+@media (max-width: 600px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .footer-about {
+        grid-column: auto;
+    }
+}
+
+/* Bottom */
+.footer-bottom {
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.footer-copyright {
+    font-size: 13px;
+    color: var(--muted-foreground);
+    text-align: center;
+    margin: 0;
+}
