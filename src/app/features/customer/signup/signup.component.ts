@@ -1,116 +1,119 @@
-import { Component, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, signal } from '@angular/core';
 import {
     ReactiveFormsModule,
-    FormBuilder,
+    FormControl,
     FormGroup,
     Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AlertComponent } from '../../../shared/components/alert/alert.component';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import {
-    CardComponent,
-    CardHeaderComponent,
-    CardContentComponent,
-} from '../../../shared/components/card/card.component';
-import { DividerComponent } from '../../../shared/components/divider/divider.component';
-import { InputComponent } from '../../../shared/components/input/input.component';
-import { LinkComponent } from '../../../shared/components/link/link.component';
-import {
-    SelectComponent,
-    SelectOption,
-} from '../../../shared/components/select/select.component';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/service/auth.service';
+
+interface CountryCode {
+    code: string;
+    name: string;
+    flag: string;
+}
 
 @Component({
     selector: 'app-signup',
     standalone: true,
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        CardComponent,
-        CardHeaderComponent,
-        CardContentComponent,
-        InputComponent,
-        ButtonComponent,
-        AlertComponent,
-        LinkComponent,
-        SelectComponent,
-        DividerComponent,
-    ],
+    imports: [ReactiveFormsModule, RouterModule],
     templateUrl: './signup.component.html',
     styleUrls: ['./signup.component.css'],
 })
 export class SignupComponent {
-    signupForm: FormGroup;
     isLoading = signal(false);
     errorMessage = signal('');
     successMessage = signal('');
 
-    name = signal('');
-    email = signal('');
-    password = signal('');
-    confirmPassword = signal('');
-    mobileCountryCode = signal('91');
-    mobileNumber = signal('');
-    houseNo = signal('');
-    addressLine1 = signal('');
-    addressLine2 = signal('');
-    landmark = signal('');
-    city = signal('');
-    state = signal('');
-    pinCode = signal('');
-    country = signal('India');
+    countryCodes: CountryCode[] = [
+        { code: '+91', name: 'India', flag: '🇮🇳' },
+        { code: '+1', name: 'USA', flag: '🇺🇸' },
+        { code: '+44', name: 'UK', flag: '🇬🇧' },
+        { code: '+61', name: 'Australia', flag: '🇦🇺' },
+        { code: '+86', name: 'China', flag: '🇨🇳' },
+        { code: '+81', name: 'Japan', flag: '🇯🇵' },
+        { code: '+49', name: 'Germany', flag: '🇩🇪' },
+        { code: '+33', name: 'France', flag: '🇫🇷' },
+        { code: '+971', name: 'UAE', flag: '🇦🇪' },
+        { code: '+65', name: 'Singapore', flag: '🇸🇬' },
+    ];
 
-    countryCodeOptions = signal<SelectOption[]>([
-        { label: '+91 (India)', value: '91' },
-    ]);
+    countries: string[] = [
+        'India',
+        'USA',
+        'UK',
+        'Australia',
+        'China',
+        'Japan',
+        'Germany',
+        'France',
+        'UAE',
+        'Singapore',
+        'Canada',
+        'Other',
+    ];
 
-    constructor(
-        private fb: FormBuilder,
-        private router: Router,
-        private authService: AuthService
-    ) {
-        this.signupForm = this.fb.group({
-            name: ['', [Validators.required, Validators.minLength(3)]],
-            email: ['', [Validators.required, Validators.email]],
-            password: ['', [Validators.required, Validators.minLength(6)]],
-            confirmPassword: ['', [Validators.required]],
-            mobileCountryCode: ['91', [Validators.required]],
-            mobileNumber: [
-                '',
-                [
-                    Validators.required,
-                    Validators.pattern(/^[0-9]{10}$/),
-                    Validators.minLength(10),
-                    Validators.maxLength(10),
-                ],
-            ],
-            houseNo: ['', [Validators.required]],
-            addressLine1: ['', [Validators.required]],
-            addressLine2: [''],
-            landmark: [''],
-            city: ['', [Validators.required]],
-            state: ['', [Validators.required]],
-            pinCode: [
-                '',
-                [
-                    Validators.required,
-                    Validators.pattern(/^[0-9]{6}$/),
-                    Validators.minLength(6),
-                    Validators.maxLength(6),
-                ],
-            ],
-            country: ['India', [Validators.required]],
-        });
-    }
+    private passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/;
+
+    signupForm = new FormGroup({
+        name: new FormControl('', [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.pattern(/^[a-zA-Z\s]+$/),
+        ]),
+        email: new FormControl('', [Validators.required, Validators.email]),
+        password: new FormControl('', [
+            Validators.required,
+            Validators.minLength(6),
+            Validators.pattern(this.passwordPattern),
+        ]),
+        confirmPassword: new FormControl('', [Validators.required]),
+        mobileCountryCode: new FormControl('+91', [Validators.required]),
+        mobileNumber: new FormControl('', [
+            Validators.required,
+            Validators.pattern(/^[0-9]{10}$/),
+            Validators.minLength(10),
+            Validators.maxLength(10),
+        ]),
+        alternateMobileCountryCode: new FormControl('+91'),
+        alternateMobileNumber: new FormControl('', [
+            Validators.pattern(/^[0-9]{10}$/),
+            Validators.minLength(10),
+            Validators.maxLength(10),
+        ]),
+        houseNo: new FormControl('', [
+            Validators.required,
+            Validators.pattern(/^[a-zA-Z0-9\s\-\/]+$/),
+        ]),
+        addressLine1: new FormControl('', [Validators.required]),
+        addressLine2: new FormControl(''),
+        landmark: new FormControl(''),
+        city: new FormControl('', [
+            Validators.required,
+            Validators.pattern(/^[a-zA-Z\s]+$/),
+        ]),
+        state: new FormControl('', [
+            Validators.required,
+            Validators.pattern(/^[a-zA-Z\s]+$/),
+        ]),
+        pinCode: new FormControl('', [
+            Validators.required,
+            Validators.pattern(/^[0-9]{6}$/),
+            Validators.minLength(6),
+            Validators.maxLength(6),
+        ]),
+        country: new FormControl('India', [Validators.required]),
+        allowNotifications: new FormControl(false),
+    });
+
+    constructor(private router: Router, private authService: AuthService) {}
 
     onSubmit(): void {
         if (this.signupForm.valid) {
-            const password = this.signupForm.get('password')?.value;
-            const confirmPassword =
-                this.signupForm.get('confirmPassword')?.value;
+            const password = this.signupForm.value.password!;
+            const confirmPassword = this.signupForm.value.confirmPassword!;
 
             if (password !== confirmPassword) {
                 this.errorMessage.set('Passwords do not match');
@@ -122,111 +125,118 @@ export class SignupComponent {
             this.successMessage.set('');
 
             const response = this.authService.registerCustomer({
-                name: this.name(),
-                email: this.email(),
-                password: this.password(),
-                mobileCountryCode: this.mobileCountryCode(),
-                mobileNumber: this.mobileNumber(),
-                houseNo: this.houseNo(),
-                addressLine1: this.addressLine2(),
-                addressLine2: this.addressLine2(),
-                landmark: this.landmark(),
-                city: this.city(),
-                state: this.state(),
-                pinCode: this.pinCode(),
-                country: this.country(),
+                name: this.signupForm.value.name!,
+                email: this.signupForm.value.email!,
+                password: password,
+                mobileCountryCode: this.signupForm.value.mobileCountryCode!,
+                mobileNumber: this.signupForm.value.mobileNumber!,
+                alternateMobileCountryCode:
+                    this.signupForm.value.alternateMobileCountryCode || '',
+                alternateMobileNumber:
+                    this.signupForm.value.alternateMobileNumber || '',
+                houseNo: this.signupForm.value.houseNo!,
+                addressLine1: this.signupForm.value.addressLine1!,
+                addressLine2: this.signupForm.value.addressLine2 || '',
+                landmark: this.signupForm.value.landmark || '',
+                city: this.signupForm.value.city!,
+                state: this.signupForm.value.state!,
+                pinCode: this.signupForm.value.pinCode!,
+                country: this.signupForm.value.country!,
+                allowNotifications:
+                    this.signupForm.value.allowNotifications || false,
             });
 
             setTimeout(() => {
                 if (response.success) {
-                    this.router.navigate(['']);
+                    this.successMessage.set('Account created successfully!');
+                    setTimeout(() => {
+                        this.router.navigate(['/login']);
+                    }, 1000);
                 } else {
                     this.errorMessage.set(response.message);
                 }
-
                 this.isLoading.set(false);
-                this.successMessage.set('Account created successfully!');
-
-                this.router.navigate(['/login']);
-            }, 2000);
+            }, 1500);
         } else {
-            this.markFormGroupTouched(this.signupForm);
+            Object.keys(this.signupForm.controls).forEach((key) => {
+                this.signupForm.get(key)?.markAsTouched();
+            });
             this.errorMessage.set(
                 'Please fill in all required fields correctly.'
             );
         }
     }
 
-    private markFormGroupTouched(formGroup: FormGroup): void {
-        Object.keys(formGroup.controls).forEach((key) => {
-            const control = formGroup.get(key);
-            control?.markAsTouched();
-        });
-    }
-
     getFieldError(fieldName: string): string {
         const control = this.signupForm.get(fieldName);
-        if (control?.hasError('required') && control?.touched) {
-            return `${this.getFieldLabel(fieldName)} is required`;
+
+        if (!control || !control.touched) return '';
+
+        if (control.hasError('required')) {
+            switch (fieldName) {
+                case 'name':
+                    return 'Name is required';
+                case 'email':
+                    return 'Email is required';
+                case 'password':
+                    return 'Password is required';
+                case 'confirmPassword':
+                    return 'Confirm Password is required';
+                case 'mobileCountryCode':
+                    return 'Country code is required';
+                case 'mobileNumber':
+                    return 'Mobile number is required';
+                case 'houseNo':
+                    return 'House/Flat number is required';
+                case 'addressLine1':
+                    return 'Address Line 1 is required';
+                case 'city':
+                    return 'City is required';
+                case 'state':
+                    return 'State is required';
+                case 'pinCode':
+                    return 'PIN code is required';
+                case 'country':
+                    return 'Country is required';
+                default:
+                    return 'This field is required';
+            }
         }
-        if (control?.hasError('email') && control?.touched) {
+
+        if (control.hasError('email')) {
             return 'Please enter a valid email address';
         }
-        if (control?.hasError('minlength') && control?.touched) {
-            const minLength = control.errors?.['minlength'].requiredLength;
-            return `${this.getFieldLabel(
-                fieldName
-            )} must be at least ${minLength} characters`;
+
+        if (control.hasError('minlength')) {
+            const min = control.errors?.['minlength']?.requiredLength;
+            return `Must be at least ${min} characters`;
         }
-        if (control?.hasError('maxlength') && control?.touched) {
-            const maxLength = control.errors?.['maxlength'].requiredLength;
-            return `${this.getFieldLabel(
-                fieldName
-            )} must not exceed ${maxLength} characters`;
+
+        if (control.hasError('maxlength')) {
+            const max = control.errors?.['maxlength']?.requiredLength;
+            return `Must not exceed ${max} characters`;
         }
-        if (control?.hasError('pattern') && control?.touched) {
-            if (fieldName === 'mobileNumber') {
-                return 'Mobile number must be 10 digits';
+
+        if (control.hasError('pattern')) {
+            switch (fieldName) {
+                case 'password':
+                    return 'Password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character';
+                case 'mobileNumber':
+                case 'alternateMobileNumber':
+                    return 'Mobile number must be exactly 10 digits';
+                case 'pinCode':
+                    return 'PIN code must be exactly 6 digits';
+                case 'name':
+                case 'city':
+                case 'state':
+                    return 'Only letters are allowed';
+                case 'houseNo':
+                    return 'Only letters, numbers, spaces, hyphens, and slashes are allowed';
+                default:
+                    return 'Invalid value';
             }
-            if (fieldName === 'pinCode') {
-                return 'PIN code must be 6 digits';
-            }
-            return `Invalid ${this.getFieldLabel(fieldName).toLowerCase()}`;
         }
+
         return '';
-    }
-
-    private getFieldLabel(fieldName: string): string {
-        const labels: { [key: string]: string } = {
-            name: 'Name',
-            email: 'Email',
-            password: 'Password',
-            confirmPassword: 'Confirm Password',
-            mobileCountryCode: 'Country Code',
-            mobileNumber: 'Mobile Number',
-            houseNo: 'House/Flat No',
-            addressLine1: 'Address Line 1',
-            addressLine2: 'Address Line 2',
-            landmark: 'Landmark',
-            city: 'City',
-            state: 'State',
-            pinCode: 'PIN Code',
-            country: 'Country',
-        };
-        return labels[fieldName] || fieldName;
-    }
-
-    updateField(fieldName: string, value: string): void {
-        this.signupForm.patchValue({ [fieldName]: value });
-        this.signupForm.get(fieldName)?.markAsTouched();
-    }
-
-    onCountryCodeChange(value: string): void {
-        this.mobileCountryCode.set(value);
-        this.updateField('mobileCountryCode', value);
-        if (value === '91') {
-            this.country.set('India');
-            this.updateField('country', 'India');
-        }
     }
 }

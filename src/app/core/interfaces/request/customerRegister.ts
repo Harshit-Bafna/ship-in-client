@@ -4,6 +4,8 @@ export interface CustomerRegisterRequest {
     password: string;
     mobileCountryCode: string;
     mobileNumber: string;
+    alternateMobileCountryCode: string;
+    alternateMobileNumber: string;
     houseNo: string;
     addressLine1: string;
     addressLine2: string;
@@ -12,4 +14,5 @@ export interface CustomerRegisterRequest {
     state: string;
     pinCode: string;
     country: string;
+    allowNotifications: boolean;
 }
