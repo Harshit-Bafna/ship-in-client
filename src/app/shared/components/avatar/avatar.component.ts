@@ -47,7 +47,6 @@ type AvatarShape = 'circle' | 'square';
                 justify-content: center;
                 background: var(--muted);
                 color: var(--foreground);
-                overflow: hidden;
                 flex-shrink: 0;
             }
 

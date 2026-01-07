@@ -1,0 +1,653 @@
+<app-customer-layout
+    [userInitials]="getUserInitials()"
+    (myProfile)="navigateToProfile()"
+    (logout)="handleLogout()"
+>
+    <!-- Header Section -->
+    <div class="tracking-header">
+        <h1 class="page-title">Track Your Shipment</h1>
+        <p class="page-description">
+            Enter your tracking ID below to get real-time updates on your
+            parcel's journey. You can find your tracking ID in the booking
+            confirmation email or SMS.
+        </p>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-container">
+        <app-input
+            [(value)]="trackingId"
+            type="search"
+            size="lg"
+            placeholder="Enter Tracking ID (e.g., TRK123456789)"
+            iconLeft="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            [error]="searchError()"
+        />
+        <app-button
+            variant="primary"
+            size="lg"
+            [loading]="isSearching()"
+            (clicked)="searchTracking()"
+        >
+            Track Shipment
+        </app-button>
+    </div>
+
+    <div class="content-grid">
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Loading State -->
+            @if (isSearching()) {
+            <app-card variant="outlined" padding="xl" class="result-card">
+                <div class="loading-state">
+                    <app-spinner
+                        size="xl"
+                        variant="primary"
+                        label="Searching for your shipment..."
+                    />
+                </div>
+            </app-card>
+            }
+
+            <!-- Empty State -->
+            @else if (!hasSearched()) {
+            <app-card variant="outlined" padding="xl" class="result-card">
+                <div class="empty-state">
+                    <svg
+                        class="empty-icon"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                        />
+                    </svg>
+                    <h3 class="empty-title">Enter Tracking ID</h3>
+                    <p class="empty-description">
+                        Please enter your tracking ID above to track your
+                        parcel's current location and delivery status.
+                    </p>
+                </div>
+            </app-card>
+            }
+
+            <!-- Not Found State -->
+            @else if (notFound()) {
+            <app-card variant="outlined" padding="xl" class="result-card">
+                <app-alert variant="error" [dismissible]="false">
+                    <div class="alert-content-custom">
+                        <svg
+                            class="alert-icon-custom"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                            />
+                        </svg>
+                        <div>
+                            <h4 class="alert-title-custom">
+                                Tracking ID Not Found
+                            </h4>
+                            <p class="alert-description-custom">
+                                We couldn't find any shipment with tracking ID
+                                "<strong>{{ trackingId() }}</strong
+                                >". Please check the ID and try again, or
+                                contact support if you believe this is an error.
+                            </p>
+                        </div>
+                    </div>
+                </app-alert>
+                <div class="not-found-actions">
+                    <app-button variant="outline" (clicked)="resetSearch()">
+                        Try Another ID
+                    </app-button>
+                    <app-button variant="secondary">
+                        Contact Support
+                    </app-button>
+                </div>
+            </app-card>
+            }
+
+            <!-- Tracking Results -->
+            @else if (trackingData()) {
+            <div class="tracking-results">
+                <!-- Current Status Card -->
+                <app-card variant="outlined" padding="lg" class="status-card">
+                    <div class="status-header">
+                        <div class="status-info">
+                            <h2 class="status-title">
+                                Tracking ID: {{ trackingData()!.trackingId }}
+                            </h2>
+                            <app-badge
+                                [variant]="
+                                    getStatusBadgeVariant(
+                                        trackingData()!.currentStatus
+                                    )
+                                "
+                                size="lg"
+                            >
+                                {{ trackingData()!.currentStatus }}
+                            </app-badge>
+                        </div>
+                        <button
+                            class="refresh-button"
+                            (click)="searchTracking()"
+                        >
+                            <svg
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <app-divider />
+
+                    <div class="status-details">
+                        <div class="status-detail-item">
+                            <svg
+                                class="detail-icon"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                />
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                            </svg>
+                            <div>
+                                <p class="detail-label">Current Location</p>
+                                <p class="detail-value">
+                                    {{ trackingData()!.currentLocation }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="status-detail-item">
+                            <svg
+                                class="detail-icon"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                            </svg>
+                            <div>
+                                <p class="detail-label">Estimated Delivery</p>
+                                <p class="detail-value">
+                                    {{ trackingData()!.estimatedDeliveryDate }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <app-progress
+                        [value]="trackingData()!.progressPercentage"
+                        variant="success"
+                        size="md"
+                        [showValue]="true"
+                        label="Delivery Progress"
+                    />
+                </app-card>
+
+                <!-- Status Timeline -->
+                <app-card variant="outlined" padding="lg" class="timeline-card">
+                    <h3 class="section-title">Shipment Timeline</h3>
+                    <div class="timeline">
+                        @for (status of trackingData()!.statusHistory; track
+                        $index) {
+                        <div
+                            class="timeline-item"
+                            [class.completed]="status.completed"
+                        >
+                            <div class="timeline-marker">
+                                @if (status.completed) {
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                }
+                            </div>
+                            <div class="timeline-content">
+                                <h4 class="timeline-title">
+                                    {{ status.label }}
+                                </h4>
+                                @if (status.timestamp) {
+                                <p class="timeline-meta">
+                                    <span class="timeline-time">{{
+                                        status.timestamp
+                                    }}</span>
+                                    @if (status.location) {
+                                    <span class="timeline-location"
+                                        >• {{ status.location }}</span
+                                    >
+                                    }
+                                </p>
+                                }
+                                <p class="timeline-description">
+                                    {{ status.description }}
+                                </p>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </app-card>
+
+                <!-- Details Section -->
+                <div class="details-grid">
+                    <!-- Booking Details -->
+                    <app-card variant="outlined" padding="md">
+                        <app-card-header>
+                            <app-card-title size="sm"
+                                >Booking Details</app-card-title
+                            >
+                        </app-card-header>
+                        <app-card-content>
+                            <div class="detail-list">
+                                <div class="detail-row">
+                                    <span class="detail-key">Booking ID:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.bookingDetails.bookingId
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key"
+                                        >Booking Date:</span
+                                    >
+                                    <span class="detail-val">{{
+                                        trackingData()!.bookingDetails
+                                            .bookingDate
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key"
+                                        >Service Type:</span
+                                    >
+                                    <span class="detail-val">{{
+                                        trackingData()!.bookingDetails
+                                            .serviceType
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Priority:</span>
+                                    <app-badge variant="warning" size="sm">{{
+                                        trackingData()!.bookingDetails.priority
+                                    }}</app-badge>
+                                </div>
+                            </div>
+                        </app-card-content>
+                    </app-card>
+
+                    <!-- Parcel Details -->
+                    <app-card variant="outlined" padding="md">
+                        <app-card-header>
+                            <app-card-title size="sm"
+                                >Parcel Details</app-card-title
+                            >
+                        </app-card-header>
+                        <app-card-content>
+                            <div class="detail-list">
+                                <div class="detail-row">
+                                    <span class="detail-key">Weight:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.parcelDetails.weight
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Dimensions:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.parcelDetails.dimensions
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key"
+                                        >Package Type:</span
+                                    >
+                                    <span class="detail-val">{{
+                                        trackingData()!.parcelDetails
+                                            .packageType
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Quantity:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.parcelDetails.quantity
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key"
+                                        >Declared Value:</span
+                                    >
+                                    <span class="detail-val">{{
+                                        trackingData()!.parcelDetails
+                                            .declaredValue
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Insurance:</span>
+                                    <app-badge variant="success" size="sm">{{
+                                        trackingData()!.parcelDetails.insurance
+                                    }}</app-badge>
+                                </div>
+                            </div>
+                        </app-card-content>
+                    </app-card>
+
+                    <!-- Payment Details -->
+                    <app-card variant="outlined" padding="md">
+                        <app-card-header>
+                            <app-card-title size="sm"
+                                >Payment Details</app-card-title
+                            >
+                        </app-card-header>
+                        <app-card-content>
+                            <div class="detail-list">
+                                <div class="detail-row">
+                                    <span class="detail-key">Amount:</span>
+                                    <span class="detail-val amount">{{
+                                        trackingData()!.paymentDetails.amount
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key"
+                                        >Payment Method:</span
+                                    >
+                                    <span class="detail-val">{{
+                                        trackingData()!.paymentDetails
+                                            .paymentMethod
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Status:</span>
+                                    <app-badge variant="success" size="sm">{{
+                                        trackingData()!.paymentDetails
+                                            .paymentStatus
+                                    }}</app-badge>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key"
+                                        >Transaction ID:</span
+                                    >
+                                    <span class="detail-val">{{
+                                        trackingData()!.paymentDetails
+                                            .transactionId
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key"
+                                        >Payment Date:</span
+                                    >
+                                    <span class="detail-val">{{
+                                        trackingData()!.paymentDetails
+                                            .paymentDate
+                                    }}</span>
+                                </div>
+                            </div>
+                        </app-card-content>
+                    </app-card>
+
+                    <!-- Packaging Details -->
+                    <app-card variant="outlined" padding="md">
+                        <app-card-header>
+                            <app-card-title size="sm"
+                                >Packaging Details</app-card-title
+                            >
+                        </app-card-header>
+                        <app-card-content>
+                            <div class="detail-list">
+                                <div class="detail-row">
+                                    <span class="detail-key"
+                                        >Packaging Type:</span
+                                    >
+                                    <span class="detail-val">{{
+                                        trackingData()!.packagingDetails
+                                            .packagingType
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Fragile:</span>
+                                    <app-badge
+                                        [variant]="
+                                            trackingData()!.packagingDetails
+                                                .fragile
+                                                ? 'warning'
+                                                : 'default'
+                                        "
+                                        size="sm"
+                                    >
+                                        {{
+                                            trackingData()!.packagingDetails
+                                                .fragile
+                                                ? "Yes"
+                                                : "No"
+                                        }}
+                                    </app-badge>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Perishable:</span>
+                                    <app-badge
+                                        [variant]="
+                                            trackingData()!.packagingDetails
+                                                .perishable
+                                                ? 'error'
+                                                : 'default'
+                                        "
+                                        size="sm"
+                                    >
+                                        {{
+                                            trackingData()!.packagingDetails
+                                                .perishable
+                                                ? "Yes"
+                                                : "No"
+                                        }}
+                                    </app-badge>
+                                </div>
+                                @if
+                                (trackingData()!.packagingDetails.specialHandling.length
+                                > 0) {
+                                <div class="detail-row-column">
+                                    <span class="detail-key"
+                                        >Special Handling:</span
+                                    >
+                                    <div class="badge-group">
+                                        @for (handling of
+                                        trackingData()!.packagingDetails.specialHandling;
+                                        track handling) {
+                                        <app-badge variant="info" size="sm">{{
+                                            handling
+                                        }}</app-badge>
+                                        }
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </app-card-content>
+                    </app-card>
+
+                    <!-- Sender Details -->
+                    <app-card variant="outlined" padding="md">
+                        <app-card-header>
+                            <app-card-title size="sm"
+                                >Sender Details</app-card-title
+                            >
+                        </app-card-header>
+                        <app-card-content>
+                            <div class="detail-list">
+                                <div class="detail-row">
+                                    <span class="detail-key">Name:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.senderDetails.name
+                                    }}</span>
+                                </div>
+                                <div class="detail-row-column">
+                                    <span class="detail-key">Address:</span>
+                                    <span class="detail-val">
+                                        {{
+                                            trackingData()!.senderDetails
+                                                .address
+                                        }}<br />
+                                        {{
+                                            trackingData()!.senderDetails.city
+                                        }},
+                                        {{
+                                            trackingData()!.senderDetails.state
+                                        }}
+                                        -
+                                        {{
+                                            trackingData()!.senderDetails
+                                                .pincode
+                                        }}
+                                    </span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Phone:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.senderDetails.phone
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Email:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.senderDetails.email
+                                    }}</span>
+                                </div>
+                            </div>
+                        </app-card-content>
+                    </app-card>
+
+                    <!-- Receiver Details -->
+                    <app-card variant="outlined" padding="md">
+                        <app-card-header>
+                            <app-card-title size="sm"
+                                >Receiver Details</app-card-title
+                            >
+                        </app-card-header>
+                        <app-card-content>
+                            <div class="detail-list">
+                                <div class="detail-row">
+                                    <span class="detail-key">Name:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.receiverDetails.name
+                                    }}</span>
+                                </div>
+                                <div class="detail-row-column">
+                                    <span class="detail-key">Address:</span>
+                                    <span class="detail-val">
+                                        {{
+                                            trackingData()!.receiverDetails
+                                                .address
+                                        }}<br />
+                                        {{
+                                            trackingData()!.receiverDetails
+                                                .city
+                                        }},
+                                        {{
+                                            trackingData()!.receiverDetails
+                                                .state
+                                        }}
+                                        -
+                                        {{
+                                            trackingData()!.receiverDetails
+                                                .pincode
+                                        }}
+                                    </span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Phone:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.receiverDetails.phone
+                                    }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-key">Email:</span>
+                                    <span class="detail-val">{{
+                                        trackingData()!.receiverDetails.email
+                                    }}</span>
+                                </div>
+                            </div>
+                        </app-card-content>
+                    </app-card>
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Sidebar - Ongoing Parcels -->
+        <div class="sidebar">
+            <app-card variant="outlined" padding="md" class="ongoing-card">
+                <h3 class="sidebar-title">Your Ongoing Shipments</h3>
+                <p class="sidebar-description">
+                    Click on any shipment to view its tracking details
+                </p>
+
+                @if (isLoadingOngoing()) {
+                <div class="ongoing-loading">
+                    @for (i of [1,2,3]; track i) {
+                    <app-skeleton
+                        variant="rounded"
+                        height="60px"
+                        style="margin-bottom: 12px"
+                    />
+                    }
+                </div>
+                } @else if (ongoingParcels().length > 0) {
+                <app-table
+                    [columns]="ongoingTableColumns"
+                    [data]="ongoingParcels()"
+                    [config]="{ hoverable: true, compact: true }"
+                    (rowClicked)="handleOngoingRowClick($event)"
+                />
+                } @else {
+                <div class="no-ongoing">
+                    <svg
+                        class="no-ongoing-icon"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                        />
+                    </svg>
+                    <p class="no-ongoing-text">No ongoing shipments</p>
+                </div>
+                }
+            </app-card>
+        </div>
+    </div>
+</app-customer-layout>

@@ -28,4 +28,18 @@ export const routes: Routes = [
                 (m) => m.SignupComponent
             ),
     },
+    {
+        path: path.CUSTOMER_HOME,
+        loadComponent: () =>
+            import('./features/customer/home/home.component').then(
+                (m) => m.CustomerHomeComponent
+            ),
+    },
+    {
+        path: path.TRACKING,
+        loadComponent: () =>
+            import('./features/common/tracking/tracking.component').then(
+                (m) => m.TrackingComponent
+            ),
+    },
 ];
