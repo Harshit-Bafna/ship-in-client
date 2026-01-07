@@ -1,57 +1,45 @@
 import { Component, signal } from '@angular/core';
 import {
     ReactiveFormsModule,
-    FormBuilder,
+    FormControl,
     FormGroup,
     Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertComponent } from '../../../shared/components/alert/alert.component';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import {
-    CardComponent,
-    CardHeaderComponent,
-    CardContentComponent,
-} from '../../../shared/components/card/card.component';
-import { InputComponent } from '../../../shared/components/input/input.component';
-import { LinkComponent } from '../../../shared/components/link/link.component';
-import {
-    AuthService,
-} from '../../../core/service/auth.service';
+import { AuthService } from '../../../core/service/auth.service';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [
-        ReactiveFormsModule,
-        CardComponent,
-        CardHeaderComponent,
-        CardContentComponent,
-        InputComponent,
-        ButtonComponent,
-        AlertComponent,
-        LinkComponent,
-    ],
+    imports: [ReactiveFormsModule],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-    loginForm: FormGroup;
     isLoading = signal(false);
     errorMessage = signal('');
-    username = signal('');
-    password = signal('');
+    isPasswordVisible = signal(false);
 
-    constructor(
-        private fb: FormBuilder,
-        private router: Router,
-        private authService: AuthService
-    ) {
-        this.loginForm = this.fb.group({
-            username: ['', [Validators.required, Validators.minLength(3)]],
-            password: ['', [Validators.required, Validators.minLength(6)]],
-        });
+    togglePasswordVisibility(): void {
+        this.isPasswordVisible.update((v) => !v);
     }
+
+    private passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/;
+
+    loginForm = new FormGroup({
+        username: new FormControl('', [
+            Validators.required,
+            Validators.minLength(5),
+        ]),
+        password: new FormControl('', [
+            Validators.required,
+            Validators.minLength(6),
+            Validators.pattern(this.passwordPattern),
+        ]),
+    });
+
+    constructor(private router: Router, private authService: AuthService) {}
 
     onSubmit(): void {
         if (this.loginForm.valid) {
@@ -59,8 +47,8 @@ export class LoginComponent {
             this.errorMessage.set('');
 
             const response = this.authService.login(
-                this.username(),
-                this.password()
+                this.loginForm.value.username!,
+                this.loginForm.value.password!
             );
 
             setTimeout(() => {
@@ -72,43 +60,37 @@ export class LoginComponent {
                 this.isLoading.set(false);
             }, 1500);
         } else {
-            this.markFormGroupTouched(this.loginForm);
+            Object.keys(this.loginForm.controls).forEach((key) => {
+                this.loginForm.get(key)?.markAsTouched();
+            });
             this.errorMessage.set(
                 'Please fill in all required fields correctly.'
             );
         }
     }
 
-    private markFormGroupTouched(formGroup: FormGroup): void {
-        Object.keys(formGroup.controls).forEach((key) => {
-            const control = formGroup.get(key);
-            control?.markAsTouched();
-        });
-    }
-
     getFieldError(fieldName: string): string {
         const control = this.loginForm.get(fieldName);
-        if (control?.hasError('required') && control?.touched) {
+
+        if (!control?.touched) return '';
+
+        if (control.hasError('required')) {
             return `${
                 fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
             } is required`;
         }
-        if (control?.hasError('minlength') && control?.touched) {
+
+        if (control.hasError('minlength')) {
             const minLength = control.errors?.['minlength'].requiredLength;
             return `${
                 fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
             } must be at least ${minLength} characters`;
         }
+
+        if (control.hasError('pattern') && fieldName === 'password') {
+            return 'Password must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character';
+        }
+
         return '';
-    }
-
-    updateUsername(value: string): void {
-        this.loginForm.patchValue({ username: value });
-        this.loginForm.get('username')?.markAsTouched();
-    }
-
-    updatePassword(value: string): void {
-        this.loginForm.patchValue({ password: value });
-        this.loginForm.get('password')?.markAsTouched();
     }
 }
