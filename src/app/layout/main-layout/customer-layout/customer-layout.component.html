@@ -1,0 +1,15 @@
+<div class="layout">
+    <app-navbar
+        class="navbar"
+        [navItems]="navItems()"
+        [userInitials]="userInitials()"
+        (myProfileClicked)="myProfile.emit()"
+        (logoutClicked)="logout.emit()"
+    />
+
+    <main class="main-content">
+        <ng-content></ng-content>
+    </main>
+
+    <app-footer [sections]="footerSections()" [companyName]="'Ship In'" />
+</div>
