@@ -1,0 +1,76 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <!-- BRAND -->
+        <div class="navbar-brand">
+            <img src="logo.png" class="brand-icon" alt="Logo" />
+            <span class="brand-name">Ship In</span>
+        </div>
+
+        <!-- MENU -->
+        <div class="navbar-menu" [class.navbar-menu-open]="isMobileMenuOpen()">
+            @for (item of navItems(); track item.route) {
+            <app-link class="nav-link" variant="default" size="md">
+                {{ item.label }}
+            </app-link>
+            }
+        </div>
+
+        <!-- ACTIONS (USER + HAMBURGER RIGHTMOST) -->
+        <div class="navbar-actions">
+            <!-- USER -->
+            <div class="user-menu" (click)="toggleUserMenu()">
+                <app-avatar
+                    [initials]="userInitials()"
+                    size="sm"
+                    shape="circle"
+                    [status]="'online'"
+                />
+                <svg
+                    class="dropdown-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                    />
+                </svg>
+            </div>
+
+            <!-- HAMBURGER (RIGHTMOST) -->
+            <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if (!isMobileMenuOpen()) {
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                    />
+                    } @else {
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                    }
+                </svg>
+            </button>
+
+            @if (isUserMenuOpen()) {
+            <div class="user-dropdown">
+                <button class="dropdown-item" (click)="handleMyProfile()">
+                    My Profile
+                </button>
+                <button class="dropdown-item logout" (click)="handleLogout()">
+                    Logout
+                </button>
+            </div>
+            }
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,184 @@
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* BRAND */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.brand-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.brand-name {
+    font-size: 20px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* MENU */
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link {
+    padding: 8px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+/* ACTIONS */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+/* USER */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.user-menu:hover {
+    background: var(--muted);
+}
+
+.dropdown-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    min-width: 180px;
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+    z-index: 2000;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+.dropdown-item:hover {
+    background: var(--muted);
+}
+
+.dropdown-item.logout {
+    color: var(--destructive);
+    border-top: 1px solid var(--border);
+}
+
+/* HAMBURGER */
+.mobile-menu-toggle {
+    display: none;
+    justify-items: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.mobile-menu-toggle svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* ---------------- MOBILE FIX ---------------- */
+@media (max-width: 768px) {
+    .navbar-container {
+        justify-content: space-between;
+    }
+
+    /* Keep menu dropdown full width and fixed */
+    .navbar-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        background: var(--background);
+        border-bottom: 1px solid var(--border);
+        padding: 12px;
+        gap: 6px;
+
+        transform: translateY(-10px);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 250ms ease;
+        z-index: 1500;
+    }
+
+    .navbar-menu-open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .nav-link {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    /* RIGHT ALIGN USER + HAMBURGER */
+    .navbar-actions {
+        gap: 6px;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+}
+
+@media (max-width: 420px) {
+    .brand-name {
+        display: none;
+    }
+}
