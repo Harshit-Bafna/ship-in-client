@@ -313,14 +313,6 @@ export class TrackingComponent implements OnInit {
         return 'JD';
     }
 
-    navigateToProfile(): void {
-        this.router.navigate(['/profile']);
-    }
-
-    handleLogout(): void {
-        console.log('Logout clicked');
-    }
-
     getStatusBadgeVariant(
         status: string
     ):

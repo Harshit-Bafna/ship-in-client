@@ -2,9 +2,7 @@
     <app-navbar
         class="navbar"
         [navItems]="navItems()"
-        [userInitials]="userInitials()"
-        (myProfileClicked)="myProfile.emit()"
-        (logoutClicked)="logout.emit()"
+        [profileRoute]="'/customer/my-profile'"
     />
 
     <main class="main-content">

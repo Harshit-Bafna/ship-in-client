@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FooterComponent, FooterSection } from '../../footer/footer.component';
@@ -38,9 +38,4 @@ export class CustomerLayoutComponent {
             ],
         },
     ]);
-
-    userInitials = input<string>('U');
-
-    myProfile = output<void>();
-    logout = output<void>();
 }

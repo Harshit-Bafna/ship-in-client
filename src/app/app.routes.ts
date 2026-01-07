@@ -9,6 +9,7 @@ import { TrackingComponent } from './features/customer/tracking/tracking.compone
 import { AppComponent } from './app.component';
 import { CustomerProfileComponent } from './features/customer/customer-profile/customer-profile.component';
 import { UnAuthGuard } from './core/guards/unauth.guard';
+import { SupportComponent } from './features/customer/support/support.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -29,7 +30,7 @@ export const routes: Routes = [
         data: { roles: [EUserRole.CUSTOMER] },
     },
     {
-        path: 'customer/myProfile',
+        path: 'customer/my-profile',
         component: CustomerProfileComponent,
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: [EUserRole.CUSTOMER] },
@@ -40,4 +41,10 @@ export const routes: Routes = [
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: [EUserRole.CUSTOMER] },
     },
+    {
+        path: 'customer/support',
+        component: SupportComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: [EUserRole.CUSTOMER] },
+    }
 ];

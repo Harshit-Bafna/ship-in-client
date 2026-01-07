@@ -1,5 +1,4 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { LinkComponent } from '../../shared/components/link/link.component';
 
 export interface FooterSection {
@@ -10,7 +9,7 @@ export interface FooterSection {
 @Component({
     selector: 'app-footer',
     standalone: true,
-    imports: [CommonModule, LinkComponent],
+    imports: [LinkComponent],
     templateUrl: './footer.component.html',
     styleUrl: './footer.component.css',
 })

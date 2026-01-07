@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CustomerRegisterRequest } from '../interfaces/request/customerRegister';
 import { ApiResponse } from '../interfaces/ApiResponse';
 import { EUserRole } from '../enums/EUserRole';
+import { Router } from '@angular/router';
 
 export interface IUserDetails {
     id: number;
@@ -56,6 +57,8 @@ export const USERS_DB = [
     providedIn: 'root',
 })
 export class AuthService {
+    constructor(private router: Router) {}
+
     login(username: string, password: string): ApiResponse {
         const isUser = USERS_DB.find(
             (u) =>
@@ -100,6 +103,8 @@ export class AuthService {
 
     logout(): ApiResponse {
         localStorage.clear();
+
+        this.router.navigate(['/login']);
 
         return {
             statusCode: 200,

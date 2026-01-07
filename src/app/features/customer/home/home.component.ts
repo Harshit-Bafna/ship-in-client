@@ -56,7 +56,6 @@ export class CustomerHomeComponent implements OnInit {
     async loadData(): Promise<void> {
         this.isLoading.set(true);
 
-        // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         this.analytics.set({
@@ -106,14 +105,5 @@ export class CustomerHomeComponent implements OnInit {
 
     navigateToHistory(): void {
         this.router.navigate(['/history']);
-    }
-
-    navigateToProfile(): void {
-        this.router.navigate(['/profile']);
-    }
-
-    handleLogout(): void {
-        console.log('Logout clicked');
-        // Implement logout logic
     }
 }

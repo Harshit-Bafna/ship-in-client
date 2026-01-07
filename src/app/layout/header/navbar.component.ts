@@ -1,7 +1,8 @@
-import { Component, input, output, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, input, signal } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { LinkComponent } from '../../shared/components/link/link.component';
+import { AuthService, IUserDetails } from '../../core/service/auth.service';
 
 export interface NavItem {
     label: string;
@@ -17,11 +18,10 @@ export interface NavItem {
     styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
-    navItems = input<NavItem[]>([]);
-    userInitials = input<string>('U');
+    constructor(private authService: AuthService, private router: Router) {}
 
-    myProfileClicked = output<void>();
-    logoutClicked = output<void>();
+    navItems = input<NavItem[]>([]);
+    profileRoute = input<string>('');
 
     isUserMenuOpen = signal(false);
     isMobileMenuOpen = signal(false);
@@ -35,12 +35,21 @@ export class NavbarComponent {
     }
 
     handleMyProfile(): void {
+        console.log(this.profileRoute());
+        
+        this.router.navigateByUrl(this.profileRoute());
         this.isUserMenuOpen.set(false);
-        this.myProfileClicked.emit();
     }
 
     handleLogout(): void {
+        this.authService.logout();
         this.isUserMenuOpen.set(false);
-        this.logoutClicked.emit();
+    }
+
+    getUserInitials(): string {
+        const user: IUserDetails = this.authService.getUserDetails()
+            .data as IUserDetails;
+
+        return user.name.slice(0, 1);
     }
 }

@@ -25,7 +25,7 @@
             <!-- USER -->
             <div class="user-menu" (click)="toggleUserMenu()">
                 <app-avatar
-                    [initials]="userInitials()"
+                    [initials]="getUserInitials()"
                     size="sm"
                     shape="circle"
                     [status]="'online'"
@@ -45,7 +45,7 @@
                 </svg>
             </div>
 
-            <!-- HAMBURGER (RIGHTMOST) -->
+            <!-- HAMBURGER -->
             <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     @if (!isMobileMenuOpen()) {

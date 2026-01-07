@@ -6,7 +6,8 @@ import {
     Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../core/service/auth.service';
+import { AuthService, IUserDetails } from '../../../core/service/auth.service';
+import { EUserRole } from '../../../core/enums/EUserRole';
 
 @Component({
     selector: 'app-login',
@@ -51,14 +52,21 @@ export class LoginComponent {
                 this.loginForm.value.password!
             );
 
-            setTimeout(() => {
-                if (response.success) {
-                    this.router.navigate(['']);
-                } else {
-                    this.errorMessage.set(response.message);
+            if (response.success) {
+                const responseData: IUserDetails =
+                    response.data as IUserDetails;
+
+                if (responseData.role === EUserRole.CUSTOMER) {
+                    this.router.navigateByUrl('/customer');
+                } else if (responseData.role === EUserRole.OFFICER) {
+                    this.router.navigateByUrl('/officer');
                 }
-                this.isLoading.set(false);
-            }, 1500);
+    
+            } else {
+                this.errorMessage.set(response.message);
+            }
+
+            this.isLoading.set(false);
         } else {
             Object.keys(this.loginForm.controls).forEach((key) => {
                 this.loginForm.get(key)?.markAsTouched();
