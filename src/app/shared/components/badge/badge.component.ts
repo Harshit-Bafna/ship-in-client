@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-type BadgeVariant =
+export type BadgeVariant =
     | 'default'
     | 'primary'
     | 'secondary'

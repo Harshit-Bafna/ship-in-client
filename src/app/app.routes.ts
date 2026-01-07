@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { CustomerProfileComponent } from './features/customer/customer-profile/customer-profile.component';
 import { UnAuthGuard } from './core/guards/unauth.guard';
 import { SupportComponent } from './features/customer/support/support.component';
+import { BookingHistoryComponent } from './features/customer/booking-history/booking-history.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -46,5 +47,11 @@ export const routes: Routes = [
         component: SupportComponent,
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: [EUserRole.CUSTOMER] },
-    }
+    },
+    {
+        path: 'customer/history',
+        component: BookingHistoryComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: [EUserRole.CUSTOMER] },
+    },
 ];
