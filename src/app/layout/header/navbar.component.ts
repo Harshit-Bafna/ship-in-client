@@ -1,5 +1,4 @@
 import { Component, input, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { LinkComponent } from '../../shared/components/link/link.component';
@@ -13,7 +12,7 @@ export interface NavItem {
 @Component({
     selector: 'app-navbar',
     standalone: true,
-    imports: [CommonModule, RouterModule, LinkComponent, AvatarComponent],
+    imports: [RouterModule, LinkComponent, AvatarComponent],
     templateUrl: './navbar.component.html',
     styleUrl: './navbar.component.css',
 })

@@ -113,12 +113,14 @@ export class AuthService {
     }
 
     getUserDetails(): ApiResponse {
-        const user = localStorage.getItem('userDetails');
+        const user: IUserDetails = JSON.parse(
+            localStorage.getItem('userDetails') || ''
+        );
         return {
             statusCode: 200,
             success: true,
             message: 'Data fetched successfully',
-            data: user ? JSON.parse(user) : undefined,
+            data: user ? user : undefined,
         };
     }
 

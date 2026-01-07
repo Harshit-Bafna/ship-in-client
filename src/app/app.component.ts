@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { AuthService } from './core/service/auth.service';
+import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -8,19 +7,4 @@ import { AuthService } from './core/service/auth.service';
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
 })
-export class AppComponent implements OnInit {
-    constructor(private router: Router, private authService: AuthService) {}
-
-    ngOnInit(): void {
-        this.handleInitialNavigation();
-    }
-
-    handleInitialNavigation() {
-        if (this.authService.isLoggedIn()) {
-            const route = this.authService.getRedirectRouteByRole();
-            this.router.navigateByUrl(route);
-        } else {
-            this.router.navigateByUrl('/login');
-        }
-    }
-}
+export class AppComponent {}
