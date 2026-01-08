@@ -1,63 +1,323 @@
 .container {
     padding: 20px;
+    padding-top: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     max-width: 1200px;
-    margin: auto;
-    font-family: Arial, sans-serif;
+    margin: 0 auto;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 20px;
 }
 
 .filters {
     display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.filters input,
-.filters select {
-    padding: 8px;
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    font-size: 14px;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: #007bff;
 }
 
 .download-actions {
-    text-align: right;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn-download {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.btn-download:hover {
+    opacity: 0.9;
 }
 
 .excel {
-    background: #217346;
+    background-color: #217346;
     color: white;
-    padding: 8px 12px;
-    border: none;
 }
+
 .pdf {
-    background: #b30b00;
+    background-color: #b30b00;
     color: white;
-    padding: 8px 12px;
-    border: none;
+}
+
+.table-container {
+    overflow-x: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    background: white;
+}
+
+thead {
+    background-color: #007bff;
+    color: white;
 }
 
 th,
 td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
 }
 
-thead {
-    background: #007bff;
-    color: white;
+th {
+    font-weight: 600;
+    white-space: nowrap;
 }
 
-.btn-feedback {
-    background: #ffc107;
-    border: none;
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.no-data {
+    text-align: center;
+    padding: 30px;
+    color: #888;
+}
+
+.status-select {
     padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
     cursor: pointer;
+    font-size: 0.9em;
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: #007bff;
 }
 
 .pagination {
-    margin-top: 15px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-weight: 600;
+    color: #555;
+}
+
+.btn-feedback {
+    background-color: #ffc107;
+    color: #333;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    margin-right: 8px;
+}
+
+.btn-feedback:hover {
+    background-color: #e0a800;
+}
+
+.no-feedback {
+    color: #888;
+    font-size: 0.9em;
+}
+
+.actions-cell {
+    position: relative;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.menu-trigger {
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 6px;
+    color: #333;
+}
+
+.menu-trigger:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+}
+
+.menu-trigger:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+.menu-panel {
+    position: absolute;
+    right: 6px;
+    top: calc(100% - 2px);
+    min-width: 180px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    z-index: 10;
+    padding: 6px 0;
+}
+
+.menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #111827;
+}
+
+.menu-item:hover {
+    background: #f1f1f1;
+}
+
+.menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    z-index: 5;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.feedback-details {
+    margin-bottom: 20px;
+}
+
+.feedback-details p {
+    margin: 8px 0;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.star-display {
+    font-size: 24px;
+    color: #ffc107;
+    margin: 10px 0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.btn-close {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-close:hover {
+    background-color: #5a6268;
 }

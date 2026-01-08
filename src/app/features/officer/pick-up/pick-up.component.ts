@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { OfficerLayoutComponent } from "../../../layout/main-layout/officer-layout/officer-layout.component";
 
 interface Booking {
     bookingId: string;
@@ -17,7 +18,7 @@ interface Booking {
 @Component({
     selector: 'app-pick-up',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, OfficerLayoutComponent],
     templateUrl: './pick-up.component.html',
     styleUrl: './pick-up.component.css',
 })

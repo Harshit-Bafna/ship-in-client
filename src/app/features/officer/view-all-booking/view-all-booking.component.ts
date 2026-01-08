@@ -5,6 +5,9 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { OfficerLayoutComponent } from '../../../layout/main-layout/officer-layout/officer-layout.component';
+import { Router } from '@angular/router';
+import { BookingService } from '../../../core/service/booking.service';
+import { EBookingStatus } from '../../../core/enums/EBookingStatus';
 
 interface Feedback {
     rating: number;
@@ -19,7 +22,7 @@ interface Booking {
     receiverName: string;
     deliveredAddress: string;
     amount: number;
-    status: 'Pending' | 'In Process' | 'Delivered' | 'Cancelled';
+    status: EBookingStatus;
     feedback?: Feedback;
 }
 
@@ -35,40 +38,46 @@ export class ViewAllBookingsOfficerComponent implements OnInit {
     displayedBookings: Booking[] = [];
     downloadBookings: Booking[] = [];
 
-    // Filters
     filterCustomerId = '';
     filterBookingId = '';
     filterDate = '';
     filterStatus = '';
 
-    // Pagination
     currentPage = 1;
     itemsPerPage = 10;
     totalPages = 1;
 
+    allStatuses: EBookingStatus[] = Object.values(EBookingStatus);
+
+    statusFlow: EBookingStatus[] = [
+        EBookingStatus.BOOKED,
+        EBookingStatus.PICKED_UP,
+        EBookingStatus.IN_TRANSIT,
+        EBookingStatus.OUT_FOR_DELIVERY,
+        EBookingStatus.DELIVERED,
+    ];
+
+    openMenuId: string | null = null;
+    isFeedbackModalOpen = false;
+    selectedBooking: Booking | null = null;
+
+    constructor(
+        private router: Router,
+        private bookingService: BookingService
+    ) {}
+
     ngOnInit(): void {
-        this.loadMockData();
-        this.applyFilters();
-    }
-
-    loadMockData() {
-        const statuses: Booking['status'][] = [
-            'Pending',
-            'In Process',
-            'Delivered',
-            'Cancelled',
-        ];
-
-        for (let i = 1; i <= 55; i++) {
-            this.allBookings.push({
-                customerId: `CUST-${1000 + i}`,
-                customerName: `Customer ${i}`,
-                bookingId: `BK-${2025000 + i}`,
-                bookingDate: this.randomDate(),
-                receiverName: `Receiver ${i}`,
-                deliveredAddress: `${i} Main St, City ${i}`,
-                amount: Math.floor(Math.random() * 500) + 100,
-                status: statuses[Math.floor(Math.random() * statuses.length)],
+        const response = this.bookingService.getAllBookings();
+        if (response.success && response.data) {
+            this.allBookings = response.data.map((booking, index) => ({
+                customerId: booking.customerId,
+                customerName: `Customer ${index + 1}`, 
+                bookingId: booking.bookingId,
+                bookingDate: booking.bookingDate,
+                receiverName: booking.receiverName,
+                deliveredAddress: booking.deliveredAddress,
+                amount: booking.amount,
+                status: booking.status,
                 feedback:
                     Math.random() > 0.6
                         ? {
@@ -76,22 +85,14 @@ export class ViewAllBookingsOfficerComponent implements OnInit {
                               comment: 'Good service',
                           }
                         : undefined,
-            });
+            }));
         }
-    }
-
-    randomDate(): string {
-        const start = new Date(2024, 0, 1).getTime();
-        const end = new Date().getTime();
-        return new Date(start + Math.random() * (end - start))
-            .toISOString()
-            .split('T')[0];
+        this.applyFilters();
     }
 
     applyFilters() {
         let temp = [...this.allBookings];
 
-        // Sort DESC by booking date
         temp.sort(
             (a, b) =>
                 new Date(b.bookingDate).getTime() -
@@ -125,6 +126,10 @@ export class ViewAllBookingsOfficerComponent implements OnInit {
         this.downloadBookings = temp;
         this.totalPages = Math.ceil(temp.length / this.itemsPerPage) || 1;
 
+        if (this.currentPage > this.totalPages) {
+            this.currentPage = 1;
+        }
+
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         this.displayedBookings = temp.slice(
             startIndex,
@@ -151,17 +156,59 @@ export class ViewAllBookingsOfficerComponent implements OnInit {
         }
     }
 
-    onStatusChange(booking: Booking) {
-        if (booking.status === 'Cancelled') {
-            console.log(`Booking ${booking.bookingId} cancelled`);
+    getUpcomingStatuses(currentStatus: EBookingStatus): EBookingStatus[] {
+        if (
+            currentStatus === EBookingStatus.CANCELLED ||
+            currentStatus === EBookingStatus.DELIVERED
+        ) {
+            return [];
         }
+
+        const currentIndex = this.statusFlow.indexOf(currentStatus);
+        if (currentIndex === -1) {
+            return [];
+        }
+
+        const upcomingStatuses = this.statusFlow.slice(currentIndex + 1);
+
+        return [...upcomingStatuses, EBookingStatus.CANCELLED];
+    }
+
+    onStatusChange(booking: Booking) {
+        const payload = {
+            bookingId: booking.bookingId,
+            customerId: booking.customerId,
+            newStatus: booking.status,
+        };
+
+        this.applyFilters();
     }
 
     viewFeedback(booking: Booking) {
         if (!booking.feedback) return;
-        alert(
-            `Rating: ${booking.feedback.rating}\nComment: ${booking.feedback.comment}`
+        this.selectedBooking = booking;
+        this.isFeedbackModalOpen = true;
+    }
+
+    closeFeedbackModal() {
+        this.isFeedbackModalOpen = false;
+        this.selectedBooking = null;
+    }
+
+    toggleMenu(evt: MouseEvent, id: string) {
+        evt.stopPropagation();
+        this.openMenuId = this.openMenuId === id ? null : id;
+    }
+
+    closeMenu() {
+        this.openMenuId = null;
+    }
+
+    onViewBookingDetails(booking: Booking) {
+        this.router.navigateByUrl(
+            `/officer/tracking?bookingId=${booking.bookingId}`
         );
+        this.closeMenu();
     }
 
     downloadExcel() {
@@ -173,30 +220,34 @@ export class ViewAllBookingsOfficerComponent implements OnInit {
 
     downloadPDF() {
         const doc = new jsPDF();
-        autoTable(doc, {
-            head: [
-                [
-                    'Customer ID',
-                    'Customer Name',
-                    'Booking ID',
-                    'Date',
-                    'Receiver',
-                    'Address',
-                    'Amount',
-                    'Status',
-                ],
+        const head = [
+            [
+                'Customer ID',
+                'Customer Name',
+                'Booking ID',
+                'Date',
+                'Receiver',
+                'Address',
+                'Amount',
+                'Status',
             ],
-            body: this.downloadBookings.map((b) => [
-                b.customerId,
-                b.customerName,
-                b.bookingId,
-                b.bookingDate,
-                b.receiverName,
-                b.deliveredAddress,
-                b.amount,
-                b.status,
-            ]),
+        ];
+        const data = this.downloadBookings.map((b) => [
+            b.customerId,
+            b.customerName,
+            b.bookingId,
+            b.bookingDate,
+            b.receiverName,
+            b.deliveredAddress,
+            b.amount,
+            b.status,
+        ]);
+
+        autoTable(doc, {
+            head: head,
+            body: data,
         });
+
         doc.save('all-bookings.pdf');
     }
 

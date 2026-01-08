@@ -55,9 +55,12 @@
 
             @if (isUserMenuOpen()) {
             <div class="user-dropdown">
-                <button class="dropdown-item" (click)="handleMyProfile()">
-                    My Profile
-                </button>
+                @if(isProfile()){<button
+                    class="dropdown-item"
+                    (click)="handleMyProfile()"
+                >
+                    My Profile</button
+                >}
                 <button class="dropdown-item logout" (click)="handleLogout()">
                     Logout
                 </button>

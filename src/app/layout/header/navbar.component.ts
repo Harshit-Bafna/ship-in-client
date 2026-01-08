@@ -1,6 +1,7 @@
 import { Component, input, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService, IUserDetails } from '../../core/service/auth.service';
+import { EUserRole } from '../../core/enums/EUserRole';
 
 export interface NavItem {
     label: string;
@@ -24,6 +25,12 @@ export class NavbarComponent {
     isUserMenuOpen = signal(false);
     isMobileMenuOpen = signal(false);
 
+    isProfile(): boolean {
+        const userDetails = this.authService.getUserDetails()
+            .data as IUserDetails;
+        return userDetails.role === EUserRole.CUSTOMER;
+    }
+
     toggleUserMenu(): void {
         this.isUserMenuOpen.update((v) => !v);
     }
@@ -34,7 +41,7 @@ export class NavbarComponent {
 
     handleMyProfile(): void {
         console.log(this.profileRoute());
-        
+
         this.router.navigateByUrl(this.profileRoute());
         this.isUserMenuOpen.set(false);
     }

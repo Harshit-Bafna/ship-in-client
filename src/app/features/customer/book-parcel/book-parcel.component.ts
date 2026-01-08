@@ -8,17 +8,8 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
-
-enum EDeliveryType {
-    STANDARD = 'STANDARD',
-    EXPRESS = 'EXPRESS',
-    SAME_DAY = 'SAME_DAY',
-}
-
-enum EPackagingType {
-    BASIC = 'BASIC',
-    PREMIUM = 'PREMIUM',
-}
+import { EDeliveryType } from '../../../core/enums/EDeliveryType';
+import { EPackagingType } from '../../../core/enums/EPackagingType';
 
 @Component({
     selector: 'app-book-parcel',
