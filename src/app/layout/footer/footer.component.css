@@ -1,20 +1,15 @@
 .footer {
-    background: var(--muted);
-    border-top: 1px solid var(--border);
+    background-color: #fcfbfb;
+    border-top: 1px solid #cce3d6;
     margin-top: auto;
 }
 
-/* Container */
 .footer-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 48px 24px 24px;
 }
 
-/* =========================
-   DESKTOP (DEFAULT)
-   About | Quick Links | Support  → ROW
-========================= */
 .footer-content {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
@@ -22,14 +17,12 @@
     margin-bottom: 32px;
 }
 
-/* Sections */
 .footer-section {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* About */
 .footer-about {
     max-width: 320px;
 }
@@ -44,28 +37,26 @@
 .brand-icon {
     width: 28px;
     height: 28px;
-    color: var(--primary);
 }
 
 .brand-name {
     font-size: 20px;
     font-weight: 800;
-    color: var(--foreground);
+    color: #14532d;
     letter-spacing: -0.5px;
 }
 
 .footer-description {
     font-size: 14px;
-    color: var(--muted-foreground);
+    color: #166534;
     line-height: 1.6;
     margin: 0;
 }
 
-/* Titles & Links */
 .footer-title {
     font-size: 16px;
     font-weight: 700;
-    color: var(--foreground);
+    color: #14532d;
     margin: 0 0 16px 0;
 }
 
@@ -75,11 +66,29 @@
     gap: 8px;
 }
 
-/* =========================
-   TABLET (≤ 1024px)
-   Quick Links | Support → ROW
-   About → NEXT ROW
-========================= */
+.footer-link {
+    font-size: 14px;
+    color: #166534;
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    color: #2f855a;
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    padding-top: 24px;
+    border-top: 1px solid #cce3d6;
+}
+
+.footer-copyright {
+    font-size: 13px;
+    color: #166534;
+    text-align: center;
+    margin: 0;
+}
+
 @media (max-width: 1024px) {
     .footer-content {
         grid-template-columns: 1fr 1fr;
@@ -92,10 +101,6 @@
     }
 }
 
-/* =========================
-   MOBILE (≤ 600px)
-   All sections → COLUMN
-========================= */
 @media (max-width: 600px) {
     .footer-content {
         grid-template-columns: 1fr;
@@ -105,17 +110,4 @@
     .footer-about {
         grid-column: auto;
     }
-}
-
-/* Bottom */
-.footer-bottom {
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-}
-
-.footer-copyright {
-    font-size: 13px;
-    color: var(--muted-foreground);
-    text-align: center;
-    margin: 0;
 }

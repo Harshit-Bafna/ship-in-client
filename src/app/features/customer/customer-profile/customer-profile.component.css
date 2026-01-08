@@ -1,4 +1,3 @@
-/* Grid wrapper */
 .profile-grid {
     max-width: 1200px;
     margin: 0 auto;
@@ -7,7 +6,6 @@
     gap: 24px;
 }
 
-/* Card */
 .profile-card {
     background: #ffffff;
     padding: 30px;
@@ -16,20 +14,17 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Title */
 .profile-title {
     text-align: center;
     margin-bottom: 24px;
     color: #333;
 }
 
-/* Details */
 .profile-details {
     display: flex;
     flex-direction: column;
 }
 
-/* Row */
 .detail-row {
     display: flex;
     justify-content: space-between;
@@ -41,21 +36,18 @@
     border-bottom: none;
 }
 
-/* Label */
 .detail-label {
     font-weight: 600;
     color: #555;
     width: 40%;
 }
 
-/* Value */
 .detail-value {
     color: #333;
     width: 60%;
     text-align: right;
 }
 
-/* Desktop layout */
 @media (min-width: 768px) {
     .profile-grid {
         grid-template-columns: 1fr 1fr;

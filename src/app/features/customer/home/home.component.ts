@@ -2,19 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
 import { AuthService, IUserDetails } from '../../../core/service/auth.service';
-
-interface AnalyticsData {
-    totalBookings: number;
-    activeShipments: number;
-    delivered: number;
-    cancelRequests: number;
-}
-
-interface ActivityItem {
-    id: string;
-    message: string;
-    timestamp: Date;
-}
+import { ICustomerAnalyticsData } from '../../../core/interfaces/response/customerAnalytics';
+import { ApplicationService } from '../../../core/service/application.service';
 
 @Component({
     selector: 'app-customer-home',
@@ -28,14 +17,18 @@ export class CustomerHomeComponent implements OnInit {
     userName = signal('');
     isLoading = signal(true);
 
-    analytics = signal<AnalyticsData>({
+    analytics = signal<ICustomerAnalyticsData>({
         totalBookings: 0,
         activeShipments: 0,
         delivered: 0,
         cancelRequests: 0,
     });
 
-    constructor(private router: Router, private authService: AuthService) {}
+    constructor(
+        private router: Router,
+        private authService: AuthService,
+        private applicationSerice: ApplicationService
+    ) {}
 
     ngOnInit(): void {
         this.loadData();
@@ -48,23 +41,16 @@ export class CustomerHomeComponent implements OnInit {
 
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        this.analytics.set({
-            totalBookings: 128,
-            activeShipments: 5,
-            delivered: 119,
-            cancelRequests: 2,
-        });
+        this.analytics.set(
+            this.applicationSerice.getCustomerHomeAnalytics()
+                .data as ICustomerAnalyticsData
+        );
 
         this.isLoading.set(false);
     }
 
     getUserInitials(): string {
-        return this.userName()
-            .split(' ')
-            .map((n) => n[0])
-            .join('')
-            .toUpperCase()
-            .substring(0, 2);
+        return this.userName().slice(0, 1);
     }
 
     navigateToNewBooking(): void {

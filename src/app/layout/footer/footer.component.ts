@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { LinkComponent } from '../../shared/components/link/link.component';
+import { RouterModule } from '@angular/router';
 
 export interface FooterSection {
     title: string;
@@ -9,7 +9,7 @@ export interface FooterSection {
 @Component({
     selector: 'app-footer',
     standalone: true,
-    imports: [LinkComponent],
+    imports: [RouterModule],
     templateUrl: './footer.component.html',
     styleUrl: './footer.component.css',
 })

@@ -19,6 +19,7 @@ import { EUserRole } from '../../../core/enums/EUserRole';
 export class LoginComponent {
     isLoading = signal(false);
     errorMessage = signal('');
+    successMessage = signal('');
 
     private passwordPattern =
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/;
@@ -52,6 +53,7 @@ export class LoginComponent {
                     response.data as IUserDetails;
 
                 if (responseData.role === EUserRole.CUSTOMER) {
+                    this.successMessage.set(response.message);
                     this.router.navigateByUrl('/customer');
                 } else if (responseData.role === EUserRole.OFFICER) {
                     this.router.navigateByUrl('/officer');

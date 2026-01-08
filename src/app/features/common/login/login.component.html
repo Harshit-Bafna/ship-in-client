@@ -1,8 +1,8 @@
 <div class="login-container">
-    <div class="card-base card-elevated card-padding-none login-card">
-        <div class="card-header logo-section">
-            <div class="logo-container">
-                <img class="logo-icon" src="logo.svg" />
+    <div class="login-card">
+        <div class="login-header">
+            <div class="logo-row">
+                <img src="logo.svg" class="logo-icon" />
                 <h1 class="brand-name">Ship In</h1>
             </div>
             <p class="brand-description">
@@ -10,119 +10,69 @@
             </p>
         </div>
 
-        <div class="card-content login-form">
+        <div class="login-body">
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
                 <h2 class="form-title">Welcome Back</h2>
                 <p class="form-subtitle">Please sign in to continue</p>
 
                 @if (errorMessage()) {
-                <div class="alert-base alert-error error-alert" role="alert">
-                    <div class="alert-icon">
-                        <svg fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
-                    </div>
-                    <div class="alert-content">
-                        <div class="alert-description">
-                            {{ errorMessage() }}
-                        </div>
-                    </div>
+                <div class="alert alert-error">
+                    {{ errorMessage() }}
+                </div>
+                }
+
+                @if (successMessage()) {
+                <div class="alert alert-success">
+                    {{ successMessage() }}
                 </div>
                 }
 
                 <div class="form-group">
-                    <div class="input-wrapper">
-                        <label for="username" class="input-label"
-                            >Username / Email Address *</label
-                        >
-                        <div class="input-container">
-                            <input
-                                id="username"
-                                type="text"
-                                placeholder="Enter your username"
-                                class="input-base"
-                                formControlName="username"
-                            />
-                        </div>
-                        @if (getFieldError('username')) {
-                        <span class="input-error">{{
-                            getFieldError("username")
-                        }}</span>
-                        }
-                    </div>
+                    <label class="input-label">Username / Email *</label>
+                    <input
+                        type="text"
+                        class="input"
+                        formControlName="username"
+                        placeholder="Enter your username"
+                    />
+                    @if (getFieldError('username')) {
+                    <span class="input-error">
+                        {{ getFieldError('username') }}
+                    </span>
+                    }
                 </div>
 
                 <div class="form-group">
-                    <div class="input-wrapper">
-                        <label for="password" class="input-label"
-                            >Password *</label
-                        >
-                        <div class="input-container">
-                            <input
-                                id="password"
-                                type="password"
-                                placeholder="Enter your password"
-                                class="input-base input-with-toggle"
-                                formControlName="password"
-                            />
-                        </div>
-                        @if (getFieldError('password')) {
-                        <span class="input-error">{{
-                            getFieldError("password")
-                        }}</span>
-                        }
-                    </div>
+                    <label class="input-label">Password *</label>
+                    <input
+                        type="password"
+                        class="input"
+                        formControlName="password"
+                        placeholder="Enter your password"
+                    />
+                    @if (getFieldError('password')) {
+                    <span class="input-error">
+                        {{ getFieldError('password') }}
+                    </span>
+                    }
                 </div>
 
                 <button
                     type="submit"
-                    class="btn-base btn-primary btn-lg btn-full submit-button"
+                    class="btn btn-primary"
                     [disabled]="isLoading()"
-                    #passwordRef
                 >
                     @if (isLoading()) {
-                    <svg class="btn-spinner" viewBox="0 0 24 24">
-                        <circle
-                            class="spinner-circle"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"
-                            fill="none"
-                        />
-                    </svg>
-                    <span class="btn-text">Signing in...</span>
+                        Signing in...
                     } @else {
-                    <span class="btn-text">Sign In</span>
-                    <svg
-                        class="btn-icon-right"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M13 7l5 5m0 0l-5 5m5-5H6"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                        />
-                    </svg>
+                        Sign In
                     }
                 </button>
 
-                <div class="signup-section">
-                    <span class="signup-text">Don't have an account?</span>
-                    <a
-                        routerLink="/customer/register"
-                        class="link-base link-primary link-md link-underline-hover signup-link"
-                    >
-                        <span class="link-text">Sign Up</span>
-                    </a>
+                <div class="signup">
+                    <span>Don't have an account?</span>
+                    <a routerLink="/customer/register">Sign Up</a>
                 </div>
             </form>
         </div>

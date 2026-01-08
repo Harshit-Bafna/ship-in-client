@@ -1,35 +1,23 @@
 <nav class="navbar">
     <div class="navbar-container">
-        <!-- BRAND -->
         <div class="navbar-brand">
             <img src="logo.svg" class="brand-icon" alt="Logo" />
             <span class="brand-name">Ship In</span>
         </div>
 
-        <!-- MENU -->
         <div class="navbar-menu" [class.navbar-menu-open]="isMobileMenuOpen()">
             @for (item of navItems(); track item.route) {
-            <app-link
-                class="nav-link"
-                variant="default"
-                size="md"
-                [routerLink]="item.route"
-            >
+            <a class="nav-link" [routerLink]="item.route">
                 {{ item.label }}
-            </app-link>
+            </a>
             }
         </div>
 
-        <!-- ACTIONS (USER + HAMBURGER RIGHTMOST) -->
         <div class="navbar-actions">
-            <!-- USER -->
             <div class="user-menu" (click)="toggleUserMenu()">
-                <app-avatar
-                    [initials]="getUserInitials()"
-                    size="sm"
-                    shape="circle"
-                    [status]="'online'"
-                />
+                <div class="user-avatar">
+                    {{ getUserInitials() }}
+                </div>
                 <svg
                     class="dropdown-icon"
                     fill="none"
@@ -45,7 +33,6 @@
                 </svg>
             </div>
 
-            <!-- HAMBURGER -->
             <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     @if (!isMobileMenuOpen()) {

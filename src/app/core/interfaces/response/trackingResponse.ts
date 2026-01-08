@@ -1,6 +1,8 @@
 import { EBookingStatus } from '../../enums/EBookingStatus';
 import { EDeliveryType } from '../../enums/EDeliveryType';
 import { EPackagingType } from '../../enums/EPackagingType';
+import { EPaymentMethod } from '../../enums/EPaymentMethod';
+import { EPaymentStatus } from '../../enums/EPaymentStatus';
 
 export interface ITrackingResponse {
     id: number;
@@ -16,8 +18,8 @@ export interface ITrackingResponse {
         name: string;
         houseNo: string;
         addressLine1: string;
-        addressLine2: string;
-        landmark: string;
+        addressLine2?: string;
+        landmark?: string;
         city: string;
         state: string;
         pincode: string;
@@ -34,10 +36,10 @@ export interface ITrackingResponse {
         estimatedDeliveryDate: Date;
         estimatedPickupDate: Date;
 
-        actualPickupDate: Date;
+        actualPickupDate?: Date;
         pickUpTime?: Date;
 
-        actualDeliveryDate: Date;
+        actualDeliveryDate?: Date;
         dropOffTime?: Date;
 
         weightInGrams: number;
@@ -55,13 +57,13 @@ export interface ITrackingResponse {
         taxAmount: number;
         finalAmount: number;
 
-        paymentStatus: string;
-        paymentMethod: string;
-        paymentAt: number;
+        paymentStatus: EPaymentStatus;
+        paymentMethod: EPaymentMethod;
+        paymentAt: Date | null;
 
-        cardLastFour: string;
-        cardBrand: string;
-        cardHolderName: string;
+        cardLastFour: string | null;
+        cardBrand: string | null;
+        cardHolderName: string | null;
 
         isRefund: {
             amount: number;
@@ -72,8 +74,8 @@ export interface ITrackingResponse {
 
     statusHistory: {
         label: string;
-        timestamp: Date;
-        location: string;
+        timestamp?: Date;
+        location?: string;
         description: string;
         completed: boolean;
     }[];
@@ -85,8 +87,8 @@ export interface ITrackingResponse {
 
         houseNo: string;
         addressLine1: string;
-        addressLine2: string;
-        landmark: string;
+        addressLine2?: string;
+        landmark?: string;
         city: string;
         state: string;
         pincode: string;

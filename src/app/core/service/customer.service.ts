@@ -8,8 +8,6 @@ export const CUSTOMER_PROFILE_DETAILS_DB: ICustomerProfileDetailsResponse[] = [
         userCode: 'CUST000001',
         name: 'Harshit Bafna',
         email: 'harshit@gmail.com',
-        password: 'Password@123',
-        confirmPassword: 'Password@123',
 
         mobileCountryCode: '+91',
         mobileNumber: '9876543210',
@@ -33,8 +31,6 @@ export const CUSTOMER_PROFILE_DETAILS_DB: ICustomerProfileDetailsResponse[] = [
         userCode: 'ADMI000002',
         name: 'Harish Bendale',
         email: 'harish@gmail.com',
-        password: 'Admin@123',
-        confirmPassword: 'Admin@123',
 
         mobileCountryCode: '+91',
         mobileNumber: '9988776655',

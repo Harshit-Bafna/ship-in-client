@@ -3,8 +3,6 @@ export interface ICustomerProfileDetailsResponse {
     userCode: string;
     name: string;
     email: string;
-    password: string;
-    confirmPassword: string;
     mobileCountryCode: string;
     mobileNumber: string;
     alternateMobileCountryCode: string | null;

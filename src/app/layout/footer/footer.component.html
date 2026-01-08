@@ -18,9 +18,9 @@
                 <h3 class="footer-title">{{ section.title }}</h3>
                 <div class="footer-links">
                     @for (link of section.links; track link.route) {
-                    <app-link variant="muted" size="sm">
+                    <a class="footer-link" [routerLink]="link.route">
                         {{ link.label }}
-                    </app-link>
+                    </a>
                     }
                 </div>
             </div>

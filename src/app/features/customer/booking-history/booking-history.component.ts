@@ -5,20 +5,10 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
-
-interface Booking {
-    customerId: string;
-    bookingId: string;
-    bookingDate: string; // YYYY-MM-DD
-    receiverName: string;
-    deliveredAddress: string;
-    amount: number;
-    status: 'Pending' | 'In Transit' | 'Delivered' | 'Cancelled';
-    hasFeedback?: boolean; // Track if feedback is already submitted
-
-    // --- New (optional): used only for Pay Bill visibility and update ---
-    paymentStatus?: 'Paid' | 'Pending';
-}
+import { Router } from '@angular/router';
+import { BookingService } from '../../../core/service/booking.service';
+import { IBookingList } from '../../../core/interfaces/response/bookingList';
+import { EBookingStatus } from '../../../core/enums/EBookingStatus';
 
 @Component({
     selector: 'app-booking-history',
@@ -28,71 +18,45 @@ interface Booking {
     styleUrl: './booking-history.component.css',
 })
 export class BookingHistoryComponent implements OnInit {
-    // Mock Data
-    allBookings: Booking[] = [];
-    displayedBookings: Booking[] = [];
-    downloadBookings: Booking[] = [];
+    allBookings: IBookingList[] = [];
+    displayedBookings: IBookingList[] = [];
+    downloadBookings: IBookingList[] = [];
 
-    // Filters
     filterBookingId: string = '';
     filterDate: string = '';
     filterStatus: string = '';
 
-    // Pagination
     currentPage: number = 1;
     itemsPerPage: number = 10;
     totalPages: number = 1;
 
-    // Feedback Modal
     isFeedbackModalOpen: boolean = false;
-    selectedBooking: Booking | null = null;
+    selectedBooking: IBookingList | null = null;
     feedbackRating: number = 0;
     feedbackSuggestion: string = '';
     feedbackError: string = '';
     feedbackSuccess: string = '';
 
-    // --- New: per-row menu state ---
+    deliveredStatus: EBookingStatus = EBookingStatus.DELIVERED;
+    cancelledStatus: EBookingStatus = EBookingStatus.CANCELLED;
+
     openMenuId: string | null = null;
 
+    constructor(
+        private router: Router,
+        private bookingService: BookingService
+    ) {}
+
     ngOnInit(): void {
-        this.loadMockData();
-        this.applyFilters();
-    }
+        const response = this.bookingService.getAllBookings();
+        if (response.success && response.data) {
+            console.log(response.data);
 
-    loadMockData() {
-        // Simulating backend fetch of complete dataset
-        // Generating 50 mock entries for demonstration
-        const statuses: (
-            | 'Pending'
-            | 'In Transit'
-            | 'Delivered'
-            | 'Cancelled'
-        )[] = ['Pending', 'In Transit', 'Delivered', 'Cancelled'];
-        for (let i = 1; i <= 50; i++) {
-            this.allBookings.push({
-                customerId: `CUST-${1000 + i}`,
-                bookingId: `BK-${2025000 + i}`,
-                bookingDate: this.getRandomDate(
-                    new Date(2024, 0, 1),
-                    new Date()
-                ),
-                receiverName: `Receiver ${i}`,
-                deliveredAddress: `${i} Main St, City ${i}`,
-                amount: Math.floor(Math.random() * 500) + 50,
-                status: statuses[Math.floor(Math.random() * statuses.length)],
-                hasFeedback: false,
-
-                // Default payment status (for demo/visibility). In real data, this comes from backend.
-                paymentStatus: 'Pending',
-            });
+            this.allBookings = response.data as IBookingList[];
+        } else {
+            console.error('Failed to load bookings:', response.message);
         }
-    }
-
-    getRandomDate(start: Date, end: Date): string {
-        const date = new Date(
-            start.getTime() + Math.random() * (end.getTime() - start.getTime())
-        );
-        return date.toISOString().split('T')[0];
+        this.applyFilters();
     }
 
     applyFilters() {
@@ -122,12 +86,10 @@ export class BookingHistoryComponent implements OnInit {
         this.totalPages = Math.ceil(tempBookings.length / this.itemsPerPage);
         if (this.totalPages === 0) this.totalPages = 1;
 
-        // Reset to page 1 if current page is out of bounds after filter
         if (this.currentPage > this.totalPages) {
             this.currentPage = 1;
         }
 
-        // Pagination Logic
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         this.displayedBookings = tempBookings.slice(
             startIndex,
@@ -136,7 +98,7 @@ export class BookingHistoryComponent implements OnInit {
     }
 
     onFilterChange() {
-        this.currentPage = 1; // Reset to first page on filter change
+        this.currentPage = 1;
         this.applyFilters();
     }
 
@@ -155,7 +117,6 @@ export class BookingHistoryComponent implements OnInit {
     }
 
     downloadExcel() {
-        //console.log(this.downloadBookings);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
             this.downloadBookings
         );
@@ -196,14 +157,11 @@ export class BookingHistoryComponent implements OnInit {
         doc.save('bookings.pdf');
     }
 
-    // Helper for UI to show if download is available
     get showDownloadOptions(): boolean {
         return this.allBookings.length > 10;
     }
 
-    // --- Feedback Logic ---
-
-    openFeedbackModal(booking: Booking) {
+    openFeedbackModal(booking: IBookingList) {
         this.selectedBooking = booking;
         this.feedbackRating = 0;
         this.feedbackSuggestion = '';
@@ -222,7 +180,6 @@ export class BookingHistoryComponent implements OnInit {
     }
 
     submitFeedback() {
-        // 1. Validation
         if (!this.selectedBooking) return;
 
         if (this.feedbackRating === 0) {
@@ -230,7 +187,6 @@ export class BookingHistoryComponent implements OnInit {
             return;
         }
 
-        // 2. Build Request Object
         const feedbackData = {
             bookingId: this.selectedBooking.bookingId,
             customerId: this.selectedBooking.customerId,
@@ -240,26 +196,20 @@ export class BookingHistoryComponent implements OnInit {
 
         console.log('Sending Feedback to Backend:', feedbackData);
 
-        // 3. Prevent duplicate submission (Simulated check)
         if (this.selectedBooking.hasFeedback) {
             this.feedbackError = 'Feedback already submitted for this booking.';
             return;
         }
 
-        // 4. Simulate API Call Success
         setTimeout(() => {
-            // Success logic
-            this.selectedBooking!.hasFeedback = true; // Update local state
+            this.selectedBooking!.hasFeedback = true;
             this.feedbackSuccess = 'Feedback submitted successfully!';
 
-            // Close modal after short delay to show success message
             setTimeout(() => {
                 this.closeFeedbackModal();
             }, 1500);
         }, 500);
     }
-
-    // --- New: Three-dot menu logic & actions ---
 
     toggleMenu(evt: MouseEvent, id: string) {
         evt.stopPropagation();
@@ -270,45 +220,39 @@ export class BookingHistoryComponent implements OnInit {
         this.openMenuId = null;
     }
 
-    isPaymentCompleted(booking: Booking): boolean {
+    isPaymentCompleted(booking: IBookingList): boolean {
         return booking.paymentStatus === 'Paid';
     }
 
-    onCancelBooking(booking: Booking) {
-        // Show only in UI if not delivered; here we do a frontend-only API placeholder
+    onCancelBooking(booking: IBookingList) {
         const payload = {
             bookingId: booking.bookingId,
             customerId: booking.customerId,
         };
         console.log('Cancel Booking API payload:', payload);
 
-        // Simulate API success and update UI status to "Cancelled"
         setTimeout(() => {
-            booking.status = 'Cancelled';
+            booking.status = EBookingStatus.CANCELLED;
             this.closeMenu();
         }, 500);
     }
 
-    onPayBill(booking: Booking) {
-        // Frontend-only payment flow placeholder
+    onPayBill(booking: IBookingList) {
         console.log('Initiating payment flow for Booking:', booking.bookingId);
 
-        // Simulate payment success
         setTimeout(() => {
-            booking.paymentStatus = 'Paid';
-            this.closeMenu();
+            this.router.navigate(['/customer/pay-bill'], {
+                state: { bookingId: booking.bookingId, amount: booking.amount },
+            });
         }, 500);
     }
 
-    onDownloadInvoice(booking: Booking) {
-        // Generate a single-booking invoice PDF using existing libs
+    onDownloadInvoice(booking: IBookingList) {
         const doc = new jsPDF();
 
-        // Title
         doc.setFontSize(16);
         doc.text('Parcel Invoice', 14, 18);
 
-        // Summary details
         doc.setFontSize(12);
         const lines = [
             `Booking ID: ${booking.bookingId}`,
@@ -327,7 +271,6 @@ export class BookingHistoryComponent implements OnInit {
             y += 6;
         });
 
-        // Table (optional, single row for clarity)
         autoTable(doc, {
             startY: y + 4,
             head: [
@@ -355,6 +298,13 @@ export class BookingHistoryComponent implements OnInit {
         });
 
         doc.save(`invoice_${booking.bookingId}.pdf`);
+        this.closeMenu();
+    }
+
+    onViewBookingDetails(booking: IBookingList) {
+        this.router.navigateByUrl(
+            `/customer/tracking?bookingId=${booking.bookingId}`
+        );
         this.closeMenu();
     }
 }

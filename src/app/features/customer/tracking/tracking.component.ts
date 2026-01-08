@@ -1,12 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { EBookingStatus } from '../../../core/enums/EBookingStatus';
-import { EDeliveryType } from '../../../core/enums/EDeliveryType';
-import { EPackagingType } from '../../../core/enums/EPackagingType';
 import { ITrackingResponse } from '../../../core/interfaces/response/trackingResponse';
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { BookingService } from '../../../core/service/booking.service';
 
 @Component({
     selector: 'app-tracking',
@@ -16,7 +14,7 @@ import { DatePipe } from '@angular/common';
     imports: [CustomerLayoutComponent, FormsModule, DatePipe],
 })
 export class CustomerTrackingComponent implements OnInit {
-    trackingId = '';
+    bookingId = '';
 
     isSearching = signal(false);
     hasSearched = signal(false);
@@ -24,145 +22,60 @@ export class CustomerTrackingComponent implements OnInit {
 
     trackingData = signal<ITrackingResponse | null>(null);
 
-    constructor(private route: ActivatedRoute) {}
+    constructor(
+        private route: ActivatedRoute,
+        private bookingService: BookingService
+    ) {}
 
     ngOnInit(): void {
-        const queryId = this.route.snapshot.queryParamMap.get('trackingId');
+        const queryId = this.route.snapshot.queryParamMap.get('bookingId');
         if (queryId) {
-            this.trackingId = queryId;
-            this.searchTracking();
+            this.bookingId = queryId;
+            this.searchTracking(this.bookingId);
         }
     }
 
-    searchTracking(): void {
-        if (!this.trackingId) {
+    searchTracking(bookingId: string): void {
+        if (!bookingId || !bookingId.trim()) {
             this.notFound.set(true);
+            this.trackingData.set(null);
             return;
         }
 
         this.isSearching.set(true);
         this.hasSearched.set(true);
         this.notFound.set(false);
+        this.trackingData.set(null);
 
         setTimeout(() => {
-            this.trackingData.set({
-                id: 1,
-                bookingId: 'BK-1001',
-                trackingId: 'TRK123456789',
-                currentStatus: EBookingStatus.IN_TRANSIT,
-                currentLocation: 'Mumbai Distribution Center',
-                estimatedDeliveryDate: new Date('2026-01-08'),
-                progressPercentage: 65,
+            try {
+                const response = this.bookingService.getTrackingDetails(
+                    bookingId.trim()
+                );
 
-                receiverDetails: {
-                    id: 1,
-                    name: 'Jane Smith',
-                    houseNo: '202',
-                    addressLine1: 'XYZ Residency',
-                    addressLine2: 'Andheri East',
-                    landmark: 'Near Metro Station',
-                    city: 'Mumbai',
-                    state: 'Maharashtra',
-                    pincode: '400001',
-                    country: 'India',
-                    phoneNumber: '+91 87654 32109',
-                    alternatePhoneNumber: '+91 99999 88888',
-                    email: 'jane.smith@example.com',
-                },
-
-                parcelDetails: {
-                    id: 10,
-                    packagingType: EPackagingType.PREMIUM,
-                    deliveryType: EDeliveryType.EXPRESS,
-                    estimatedDeliveryDate: new Date('2026-01-08'),
-                    estimatedPickupDate: new Date('2026-01-04'),
-                    actualPickupDate: new Date('2026-01-04'),
-                    pickUpTime: new Date(),
-                    actualDeliveryDate: new Date('2026-01-08'),
-                    dropOffTime: undefined,
-                    weightInGrams: 5200,
-                },
-
-                paymentDetails: {
-                    id: 99,
-                    transactionId: 'TXN789456123',
-                    baseRate: 300,
-                    packagingRate: 50,
-                    adminFee: 20,
-                    weightCharge: 40,
-                    deliveryCharge: 40,
-                    taxAmount: 30,
-                    finalAmount: 480,
-                    paymentStatus: 'PAID',
-                    paymentMethod: 'UPI',
-                    paymentAt: Date.now(),
-                    cardLastFour: '1234',
-                    cardBrand: 'VISA',
-                    cardHolderName: 'John Doe',
-                    isRefund: null,
-                },
-
-                statusHistory: [
-                    {
-                        label: 'Delivered',
-                        timestamp: new Date(),
-                        location: '',
-                        description: 'Package will be delivered',
-                        completed: false,
-                    },
-                    {
-                        label: 'Out for Delivery',
-                        timestamp: new Date(),
-                        location: '',
-                        description: 'Out for delivery',
-                        completed: false,
-                    },
-                    {
-                        label: 'In Transit',
-                        timestamp: new Date('2026-01-06T14:30'),
-                        location: 'Mumbai DC',
-                        description: 'In transit',
-                        completed: true,
-                    },
-                    {
-                        label: 'Picked Up',
-                        timestamp: new Date('2026-01-04T09:00'),
-                        location: 'Pune',
-                        description: 'Picked from sender',
-                        completed: true,
-                    },
-                    {
-                        label: 'Booked',
-                        timestamp: new Date('2026-01-04T08:00'),
-                        location: 'Online',
-                        description: 'Booking created',
-                        completed: true,
-                    },
-                ],
-
-                senderDetails: {
-                    name: 'John Doe',
-                    phone: '+91 98765 43210',
-                    email: 'john.doe@example.com',
-                    houseNo: '5',
-                    addressLine1: 'ABC Complex',
-                    addressLine2: 'Pimpri',
-                    landmark: 'Near Bank',
-                    city: 'Pune',
-                    state: 'Maharashtra',
-                    pincode: '411018',
-                    country: 'India',
-                },
-            });
-
-            this.isSearching.set(false);
+                if (!response || !response.success || !response.data) {
+                    this.notFound.set(true);
+                    this.trackingData.set(null);
+                } else {
+                    const trackingData = response.data as ITrackingResponse;
+                    this.trackingData.set(trackingData);
+                    this.notFound.set(false);
+                }
+            } catch (error) {
+                console.error('Error fetching tracking details:', error);
+                this.notFound.set(true);
+                this.trackingData.set(null);
+            } finally {
+                this.isSearching.set(false);
+            }
         }, 800);
     }
 
     resetSearch(): void {
-        this.trackingId = '';
+        this.bookingId = '';
         this.trackingData.set(null);
         this.hasSearched.set(false);
         this.notFound.set(false);
+        this.isSearching.set(false);
     }
 }

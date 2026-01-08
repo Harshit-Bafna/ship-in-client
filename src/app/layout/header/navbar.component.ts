@@ -1,7 +1,5 @@
 import { Component, input, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
-import { LinkComponent } from '../../shared/components/link/link.component';
 import { AuthService, IUserDetails } from '../../core/service/auth.service';
 
 export interface NavItem {
@@ -13,7 +11,7 @@ export interface NavItem {
 @Component({
     selector: 'app-navbar',
     standalone: true,
-    imports: [RouterModule, LinkComponent, AvatarComponent],
+    imports: [RouterModule],
     templateUrl: './navbar.component.html',
     styleUrl: './navbar.component.css',
 })

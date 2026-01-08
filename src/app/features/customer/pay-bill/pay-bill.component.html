@@ -1,0 +1,170 @@
+<app-customer-layout>
+    <div class="page">
+        <!-- Payment Form -->
+        @if (!showSuccess()) {
+        <div class="card">
+            <h2 class="title">Payment Details</h2>
+
+            <div class="info-box">
+                <div>
+                    Booking ID: <strong>{{ bookingId }}</strong>
+                </div>
+                <div>
+                    Amount: <strong>₹{{ amount }}</strong>
+                </div>
+            </div>
+
+            @if (errorMsg()) {
+            <div class="error">{{ errorMsg() }}</div>
+            }
+
+            <!-- Confirmation Step -->
+            @if (showConfirm()) {
+            <div class="confirm-section">
+                <h3>Confirm Payment Details</h3>
+                <div class="detail">
+                    <span>Cardholder:</span>
+                    <strong>{{ paymentForm.value.cardholderName }}</strong>
+                </div>
+                <div class="detail">
+                    <span>Card:</span>
+                    <strong>{{ getMaskedCard() }}</strong>
+                </div>
+                <div class="detail">
+                    <span>Amount:</span>
+                    <strong>₹{{ amount }}</strong>
+                </div>
+                <div class="btn-group">
+                    <button
+                        type="button"
+                        class="btn btn-cancel"
+                        (click)="cancelPayment()"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="processPayment()"
+                    >
+                        Confirm & Pay
+                    </button>
+                </div>
+            </div>
+            }
+
+            <!-- Payment Form -->
+            @if (!showConfirm()) {
+            <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+                <div class="field">
+                    <label>Card Number *</label>
+                    <input
+                        type="text"
+                        formControlName="cardNumber"
+                        placeholder="Enter 16 digits"
+                        maxlength="16"
+                    />
+                    @if (getError('cardNumber')) {
+                    <span class="field-error">{{
+                        getError("cardNumber")
+                    }}</span>
+                    }
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label>Expiry (MM/YY) *</label>
+                        <input
+                            type="text"
+                            formControlName="expiry"
+                            placeholder="MM/YY"
+                            maxlength="5"
+                        />
+                        @if (getError('expiry')) {
+                        <span class="field-error">{{
+                            getError("expiry")
+                        }}</span>
+                        }
+                    </div>
+
+                    <div class="field">
+                        <label>CVV *</label>
+                        <input
+                            type="password"
+                            formControlName="cvv"
+                            placeholder="CVV"
+                            maxlength="4"
+                        />
+                        @if (getError('cvv')) {
+                        <span class="field-error">{{ getError("cvv") }}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Cardholder Name *</label>
+                    <input
+                        type="text"
+                        formControlName="cardholderName"
+                        placeholder="Name on card"
+                    />
+                    @if (getError('cardholderName')) {
+                    <span class="field-error">{{
+                        getError("cardholderName")
+                    }}</span>
+                    }
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="processing()"
+                >
+                    {{ processing() ? "Processing..." : "Pay Now" }}
+                </button>
+            </form>
+            }
+        </div>
+        }
+
+        <!-- Success Screen -->
+        @if (showSuccess() && paymentResult) {
+        <div class="card">
+            <div class="success-icon">✓</div>
+            <h2 class="title">Payment Successful</h2>
+
+            <div class="receipt">
+                <div class="detail">
+                    <span>Payment ID:</span>
+                    <strong>{{ paymentResult.paymentId }}</strong>
+                </div>
+                <div class="detail">
+                    <span>Transaction ID:</span>
+                    <strong>{{ paymentResult.transactionId }}</strong>
+                </div>
+                <div class="detail">
+                    <span>Date:</span>
+                    <strong>{{ paymentResult.transactionDate }}</strong>
+                </div>
+                <div class="detail">
+                    <span>Booking ID:</span>
+                    <strong>{{ paymentResult.bookingId }}</strong>
+                </div>
+                <div class="detail">
+                    <span>Amount:</span>
+                    <strong>₹{{ paymentResult.amount }}</strong>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" (click)="downloadPDF()">
+                    Download Receipt
+                </button>
+                <button class="btn btn-secondary" (click)="goBack()">
+                    Back to Home
+                </button>
+            </div>
+        </div>
+        }
+    </div>
+</app-customer-layout>

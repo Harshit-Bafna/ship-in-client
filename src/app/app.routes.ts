@@ -13,6 +13,8 @@ import { BookingHistoryComponent } from './features/customer/booking-history/boo
 import { OfficerHomeComponent } from './features/officer/home/home.component';
 import { ViewAllBookingsOfficerComponent } from './features/officer/view-all-booking/view-all-booking.component';
 import { OfficerTrackingComponent } from './features/officer/tracking/tracking.component';
+import { PayBillComponent } from './features/customer/pay-bill/pay-bill.component';
+import { BookParcelComponent } from './features/customer/book-parcel/book-parcel.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -43,6 +45,12 @@ export const routes: Routes = [
         data: { roles: [EUserRole.CUSTOMER] },
     },
     {
+        path: 'customer/new-booking',
+        component: BookParcelComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: [EUserRole.CUSTOMER] },
+    },
+    {
         path: 'customer/tracking',
         component: CustomerTrackingComponent,
         canActivate: [AuthGuard, RoleGuard],
@@ -57,6 +65,12 @@ export const routes: Routes = [
     {
         path: 'customer/history',
         component: BookingHistoryComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: [EUserRole.CUSTOMER] },
+    },
+    {
+        path: 'customer/pay-bill',
+        component: PayBillComponent,
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: [EUserRole.CUSTOMER] },
     },

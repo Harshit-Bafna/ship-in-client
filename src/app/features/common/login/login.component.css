@@ -1,154 +1,167 @@
 .login-container {
+    padding: 16px;
+    font-family: Arial, sans-serif;
+    background-color: #f3fdf7;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    background-color: var(--secondary);
-    font-family: var(--font-sans);
 }
 
 .login-card {
-    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #cce3d6;
+    border-radius: 6px;
     max-width: 450px;
-    animation: none;
+    width: 100%;
 }
 
-.logo-section {
-    padding: 40px 40px 0 40px;
+.login-header {
+    text-align: center;
+    background-color: #e8f7ef;
+    border-bottom: 1px solid #b7e4c7;
+    padding: 24px 16px;
 }
 
-.logo-container {
+.logo-row {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     margin-bottom: 8px;
 }
 
 .logo-icon {
-    width: 36px;
-    height: 36px;
-    object-fit: contain;
+    width: 40px;
+    height: 40px;
 }
 
 .brand-name {
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--foreground);
+    color: #14532d;
+    font-size: 24px;
     margin: 0;
 }
 
 .brand-description {
     font-size: 14px;
-    color: var(--muted-foreground);
-    font-weight: 400;
+    color: #166534;
     margin: 0;
 }
 
-.login-form {
-    padding: 40px;
-}
-
-.login-form form {
-    width: 100%;
+.login-body {
+    padding: 24px 16px;
 }
 
 .form-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--foreground);
-    margin: 0 0 8px 0;
+    color: #14532d;
+    font-size: 20px;
+    margin: 0 0 4px 0;
 }
 
 .form-subtitle {
     font-size: 14px;
-    color: var(--muted-foreground);
-    margin: 0 0 30px 0;
+    color: #166534;
+    margin: 0 0 20px 0;
 }
 
-.error-alert {
-    margin-bottom: 24px;
+.alert {
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.alert-error {
+    background-color: #fee;
+    border: 1px solid #fcc;
+    color: #991b1b;
+}
+
+.alert-success {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #15803d;
 }
 
 .form-group {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
-.submit-button {
-    margin-bottom: 24px;
-}
-
-.signup-section {
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    text-align: center;
-}
-
-.signup-text {
+.input-label {
+    display: block;
     font-size: 14px;
-    color: var(--muted-foreground);
-    margin-right: 6px;
+    color: #14532d;
+    margin-bottom: 6px;
+    font-weight: 500;
 }
 
-@media (max-width: 640px) {
-    .login-container {
-        padding: 16px;
-    }
-
-    .login-card {
-        max-width: 100%;
-    }
-
-    .logo-section {
-        padding: 32px 24px 24px;
-    }
-
-    .logo-icon {
-        width: 32px;
-        height: 32px;
-    }
-
-    .brand-name {
-        font-size: 28px;
-    }
-
-    .brand-description {
-        font-size: 13px;
-    }
-
-    .login-form {
-        padding: 32px 24px;
-    }
-
-    .form-title {
-        font-size: 24px;
-    }
-
-    .form-subtitle {
-        font-size: 13px;
-    }
+.input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cce3d6;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #14532d;
+    background-color: #ffffff;
+    box-sizing: border-box;
 }
 
-@media (max-width: 380px) {
-    .logo-section {
-        padding: 24px 20px 20px;
-    }
+.input:focus {
+    outline: none;
+    border-color: #2f855a;
+}
 
-    .logo-icon {
-        width: 28px;
-        height: 28px;
-    }
+.input-error {
+    display: block;
+    font-size: 12px;
+    color: #dc2626;
+    margin-top: 4px;
+}
 
-    .brand-name {
-        font-size: 24px;
-    }
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
 
-    .login-form {
-        padding: 24px 20px;
-    }
+.btn-primary {
+    background-color: #2f855a;
+    color: #ffffff;
+}
 
-    .form-title {
-        font-size: 22px;
+.btn-primary:hover {
+    background-color: #276749;
+}
+
+.btn-primary:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.signup {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+    color: #166534;
+}
+
+.signup a {
+    color: #2f855a;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 6px;
+}
+
+.signup a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .login-body {
+        padding: 20px 12px;
     }
 }

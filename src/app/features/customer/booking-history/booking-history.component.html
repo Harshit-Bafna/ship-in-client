@@ -2,7 +2,6 @@
     <div class="container">
         <h2>Previous Bookings</h2>
 
-        <!-- Filters -->
         <div class="filters">
             <div class="filter-group">
                 <label>Booking ID:</label>
@@ -35,8 +34,8 @@
             </div>
         </div>
 
-        <!-- Download Options -->
-        <div class="download-actions" *ngIf="showDownloadOptions">
+        @if (showDownloadOptions) {
+        <div class="download-actions">
             <button (click)="downloadExcel()" class="btn-download excel">
                 Download Excel
             </button>
@@ -44,8 +43,8 @@
                 Download PDF
             </button>
         </div>
+        }
 
-        <!-- Table -->
         <div class="table-container">
             <table>
                 <thead>
@@ -61,7 +60,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let booking of displayedBookings">
+                    @for (booking of displayedBookings; track booking) {
+                    <tr>
                         <td>{{ booking.customerId }}</td>
                         <td>{{ booking.bookingId }}</td>
                         <td>{{ booking.bookingDate }}</td>
@@ -81,24 +81,18 @@
                             </span>
                         </td>
                         <td class="actions-cell">
-                            <!-- Existing action: Add Feedback (unchanged) -->
+                            @if ( booking.status === deliveredStatus &&
+                            !booking.hasFeedback ) {
                             <button
-                                *ngIf="
-                                    booking.status === 'Delivered' &&
-                                    !booking.hasFeedback
-                                "
                                 (click)="openFeedbackModal(booking)"
                                 class="btn-feedback"
                             >
                                 Add Feedback
                             </button>
-                            <span
-                                *ngIf="booking.hasFeedback"
-                                class="feedback-submitted"
-                                >Submitted</span
-                            >
+                            } @if (booking.hasFeedback) {
+                            <span class="feedback-submitted">Submitted</span>
+                            }
 
-                            <!-- New: three-dot per-row menu -->
                             <button
                                 type="button"
                                 class="menu-trigger"
@@ -108,37 +102,36 @@
                                 ⋮
                             </button>
 
-                            <div
-                                class="menu-panel"
-                                *ngIf="openMenuId === booking.bookingId"
-                            >
-                                <!-- 1) Cancel Parcel Booking: only if NOT delivered and NOT already cancelled -->
+                            @if (openMenuId === booking.bookingId) {
+                            <div class="menu-panel">
                                 <button
                                     type="button"
                                     class="menu-item"
-                                    *ngIf="
-                                        booking.status !== 'Delivered' &&
-                                        booking.status !== 'Cancelled'
-                                    "
+                                    (click)="onViewBookingDetails(booking)"
+                                >
+                                    View Booking Details
+                                </button>
+
+                                @if ( booking.status !== deliveredStatus &&
+                                booking.status !== cancelledStatus ) {
+                                <button
+                                    type="button"
+                                    class="menu-item"
                                     (click)="onCancelBooking(booking)"
                                 >
                                     Cancel Parcel Booking
                                 </button>
-
-                                <!-- 2) Pay Bill: only if NOT delivered AND payment NOT completed -->
+                                } @if ( booking.status !== deliveredStatus &&
+                                !isPaymentCompleted(booking) ) {
                                 <button
                                     type="button"
                                     class="menu-item"
-                                    *ngIf="
-                                        booking.status !== 'Delivered' &&
-                                        !isPaymentCompleted(booking)
-                                    "
                                     (click)="onPayBill(booking)"
                                 >
                                     Pay Bill
                                 </button>
+                                }
 
-                                <!-- 3) Download Invoice: always visible -->
                                 <button
                                     type="button"
                                     class="menu-item"
@@ -147,19 +140,20 @@
                                     Download Invoice
                                 </button>
                             </div>
+                            }
                         </td>
                     </tr>
-
-                    <tr *ngIf="displayedBookings.length === 0">
+                    } @if (displayedBookings.length === 0) {
+                    <tr>
                         <td colspan="8" class="no-data">
                             No bookings found matching criteria.
                         </td>
                     </tr>
+                    }
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination -->
         <div class="pagination">
             <button (click)="prevPage()" [disabled]="currentPage === 1">
                 Previous
@@ -173,18 +167,20 @@
             </button>
         </div>
 
-        <!-- Feedback Modal -->
-        <div class="modal-overlay" *ngIf="isFeedbackModalOpen">
+        @if (isFeedbackModalOpen) {
+        <div class="modal-overlay">
             <div class="modal-content">
                 <h3>Parcel Feedback</h3>
 
-                <div class="booking-details" *ngIf="selectedBooking">
+                @if (selectedBooking) {
+                <div class="booking-details">
                     <p>
                         <strong>Booking ID:</strong>
                         {{ selectedBooking.bookingId }}
                     </p>
                     <p>
-                        <strong>Date:</strong> {{ selectedBooking.bookingDate }}
+                        <strong>Date:</strong>
+                        {{ selectedBooking.bookingDate }}
                     </p>
                     <p>
                         <strong>Receiver:</strong>
@@ -195,16 +191,18 @@
                         {{ selectedBooking.deliveredAddress }}
                     </p>
                 </div>
+                }
 
                 <div class="form-group">
                     <label>Rate your experience (Mandatory):</label>
                     <div class="star-rating">
+                        @for (star of [1, 2, 3, 4, 5]; track star) {
                         <span
-                            *ngFor="let star of [1, 2, 3, 4, 5]"
                             (click)="setRating(star)"
                             [class.filled]="star <= feedbackRating"
                             >★</span
                         >
+                        }
                     </div>
                 </div>
 
@@ -217,12 +215,15 @@
                     ></textarea>
                 </div>
 
-                <div class="error-message" *ngIf="feedbackError">
+                @if (feedbackError) {
+                <div class="error-message">
                     {{ feedbackError }}
                 </div>
-                <div class="success-message" *ngIf="feedbackSuccess">
+                } @if (feedbackSuccess) {
+                <div class="success-message">
                     {{ feedbackSuccess }}
                 </div>
+                }
 
                 <div class="modal-actions">
                     <button
@@ -238,12 +239,8 @@
                 </div>
             </div>
         </div>
-
-        <!-- Backdrop to close the menu when clicking outside -->
-        <div
-            class="menu-backdrop"
-            *ngIf="openMenuId"
-            (click)="closeMenu()"
-        ></div>
+        } @if (openMenuId) {
+        <div class="menu-backdrop" (click)="closeMenu()"></div>
+        }
     </div>
 </app-customer-layout>
