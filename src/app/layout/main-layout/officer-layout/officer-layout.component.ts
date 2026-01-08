@@ -5,28 +5,28 @@ import { FooterComponent, FooterSection } from '../../footer/footer.component';
 import { NavbarComponent, NavItem } from '../../header/navbar.component';
 
 @Component({
-    selector: 'app-customer-layout',
+    selector: 'app-officer-layout',
     standalone: true,
     imports: [CommonModule, RouterModule, NavbarComponent, FooterComponent],
-    templateUrl: './customer-layout.component.html',
-    styleUrl: './customer-layout.component.css',
+    templateUrl: './officer-layout.component.html',
+    styleUrl: './officer-layout.component.css',
 })
-export class CustomerLayoutComponent {
+export class OfficerLayoutComponent {
     navItems = input<NavItem[]>([
-        { label: 'Home', route: '/customer' },
-        { label: 'New Booking', route: '/customer/new-booking' },
-        { label: 'Track Shipment', route: '/customer/tracking' },
-        { label: 'Booking History', route: '/customer/history' },
-        { label: 'Support', route: '/customer/support' },
+        { label: 'Home', route: '/officer' },
+        { label: 'New Booking', route: '/officer/new-booking' },
+        { label: 'Track Shipment', route: '/officer/tracking' },
+        { label: 'Pickup Shipment', route: '/officer/pickup' },
+        { label: 'Booking History', route: '/officer/history' },
     ]);
 
     footerSections = input<FooterSection[]>([
         {
             title: 'Quick Links',
             links: [
-                { label: 'Home', route: '/customer' },
-                { label: 'New Booking', route: '/customer/new-booking' },
-                { label: 'Tracking', route: '/customer/tracking' },
+                { label: 'Home', route: '/officer' },
+                { label: 'New Booking', route: '/officer/new-booking' },
+                { label: 'Tracking', route: '/officer/tracking' },
             ],
         },
         {

@@ -1,0 +1,63 @@
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.filters input,
+.filters select {
+    padding: 8px;
+}
+
+.download-actions {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.excel {
+    background: #217346;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+}
+.pdf {
+    background: #b30b00;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+thead {
+    background: #007bff;
+    color: white;
+}
+
+.btn-feedback {
+    background: #ffc107;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.pagination {
+    margin-top: 15px;
+    text-align: center;
+}

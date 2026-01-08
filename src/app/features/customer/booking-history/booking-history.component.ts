@@ -1,192 +1,360 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
-import { CardComponent } from '../../../shared/components/card/card.component';
-import { BadgeComponent, BadgeVariant } from '../../../shared/components/badge/badge.component';
-import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
-
-type BookingStatus = 'delivered' | 'in-transit' | 'pending' | 'cancelled';
 
 interface Booking {
-    id: string;
-    bookingNumber: string;
-    origin: string;
-    destination: string;
-    date: Date;
-    status: BookingStatus;
-    weight: string;
-    cost: number;
+    customerId: string;
+    bookingId: string;
+    bookingDate: string; // YYYY-MM-DD
+    receiverName: string;
+    deliveredAddress: string;
+    amount: number;
+    status: 'Pending' | 'In Transit' | 'Delivered' | 'Cancelled';
+    hasFeedback?: boolean; // Track if feedback is already submitted
+
+    // --- New (optional): used only for Pay Bill visibility and update ---
+    paymentStatus?: 'Paid' | 'Pending';
 }
 
 @Component({
     selector: 'app-booking-history',
     standalone: true,
-    imports: [
-        CommonModule,
-        CustomerLayoutComponent,
-        CardComponent,
-        BadgeComponent,
-        SkeletonComponent,
-    ],
+    imports: [CommonModule, CustomerLayoutComponent, FormsModule],
     templateUrl: './booking-history.component.html',
     styleUrl: './booking-history.component.css',
 })
 export class BookingHistoryComponent implements OnInit {
-    isLoading = signal(true);
-    selectedFilter = signal<BookingStatus | 'all'>('all');
-    bookings = signal<Booking[]>([]);
+    // Mock Data
+    allBookings: Booking[] = [];
+    displayedBookings: Booking[] = [];
+    downloadBookings: Booking[] = [];
 
-    filteredBookings = computed(() => {
-        const filter = this.selectedFilter();
-        if (filter === 'all') {
-            return this.bookings();
-        }
-        return this.bookings().filter((booking) => booking.status === filter);
-    });
+    // Filters
+    filterBookingId: string = '';
+    filterDate: string = '';
+    filterStatus: string = '';
 
-    stats = computed(() => {
-        const bookings = this.bookings();
-        return {
-            total: bookings.length,
-            delivered: bookings.filter((b) => b.status === 'delivered').length,
-            inTransit: bookings.filter((b) => b.status === 'in-transit').length,
-            pending: bookings.filter((b) => b.status === 'pending').length,
-        };
-    });
+    // Pagination
+    currentPage: number = 1;
+    itemsPerPage: number = 10;
+    totalPages: number = 1;
 
-    constructor(private router: Router) {}
+    // Feedback Modal
+    isFeedbackModalOpen: boolean = false;
+    selectedBooking: Booking | null = null;
+    feedbackRating: number = 0;
+    feedbackSuggestion: string = '';
+    feedbackError: string = '';
+    feedbackSuccess: string = '';
+
+    // --- New: per-row menu state ---
+    openMenuId: string | null = null;
 
     ngOnInit(): void {
-        this.loadBookings();
+        this.loadMockData();
+        this.applyFilters();
     }
 
-    async loadBookings(): Promise<void> {
-        this.isLoading.set(true);
+    loadMockData() {
+        // Simulating backend fetch of complete dataset
+        // Generating 50 mock entries for demonstration
+        const statuses: (
+            | 'Pending'
+            | 'In Transit'
+            | 'Delivered'
+            | 'Cancelled'
+        )[] = ['Pending', 'In Transit', 'Delivered', 'Cancelled'];
+        for (let i = 1; i <= 50; i++) {
+            this.allBookings.push({
+                customerId: `CUST-${1000 + i}`,
+                bookingId: `BK-${2025000 + i}`,
+                bookingDate: this.getRandomDate(
+                    new Date(2024, 0, 1),
+                    new Date()
+                ),
+                receiverName: `Receiver ${i}`,
+                deliveredAddress: `${i} Main St, City ${i}`,
+                amount: Math.floor(Math.random() * 500) + 50,
+                status: statuses[Math.floor(Math.random() * statuses.length)],
+                hasFeedback: false,
 
-        await new Promise((resolve) => setTimeout(resolve, 1200));
+                // Default payment status (for demo/visibility). In real data, this comes from backend.
+                paymentStatus: 'Pending',
+            });
+        }
+    }
 
-        this.bookings.set([
-            {
-                id: '1',
-                bookingNumber: 'BK1028',
-                origin: 'Mumbai, India',
-                destination: 'Delhi, India',
-                date: new Date('2024-01-05'),
-                status: 'delivered',
-                weight: '25 kg',
-                cost: 1250,
-            },
-            {
-                id: '2',
-                bookingNumber: 'BK1021',
-                origin: 'Pune, India',
-                destination: 'Bangalore, India',
-                date: new Date('2024-01-08'),
-                status: 'in-transit',
-                weight: '15 kg',
-                cost: 980,
-            },
-            {
-                id: '3',
-                bookingNumber: 'BK1015',
-                origin: 'Chennai, India',
-                destination: 'Kolkata, India',
-                date: new Date('2024-01-03'),
-                status: 'delivered',
-                weight: '30 kg',
-                cost: 1580,
-            },
-            {
-                id: '4',
-                bookingNumber: 'BK1009',
-                origin: 'Hyderabad, India',
-                destination: 'Mumbai, India',
-                date: new Date('2024-01-07'),
-                status: 'in-transit',
-                weight: '20 kg',
-                cost: 1120,
-            },
-            {
-                id: '5',
-                bookingNumber: 'BK1005',
-                origin: 'Delhi, India',
-                destination: 'Jaipur, India',
-                date: new Date('2023-12-28'),
-                status: 'delivered',
-                weight: '18 kg',
-                cost: 750,
-            },
-            {
-                id: '6',
-                bookingNumber: 'BK0998',
-                origin: 'Ahmedabad, India',
-                destination: 'Surat, India',
-                date: new Date('2024-01-06'),
-                status: 'pending',
-                weight: '12 kg',
-                cost: 450,
-            },
-            {
-                id: '7',
-                bookingNumber: 'BK0987',
-                origin: 'Lucknow, India',
-                destination: 'Varanasi, India',
-                date: new Date('2023-12-20'),
-                status: 'cancelled',
-                weight: '22 kg',
-                cost: 890,
-            },
-            {
-                id: '8',
-                bookingNumber: 'BK0975',
-                origin: 'Kochi, India',
-                destination: 'Trivandrum, India',
-                date: new Date('2023-12-15'),
-                status: 'delivered',
-                weight: '28 kg',
-                cost: 1340,
-            },
+    getRandomDate(start: Date, end: Date): string {
+        const date = new Date(
+            start.getTime() + Math.random() * (end.getTime() - start.getTime())
+        );
+        return date.toISOString().split('T')[0];
+    }
+
+    applyFilters() {
+        let tempBookings = this.allBookings;
+
+        if (this.filterBookingId) {
+            tempBookings = tempBookings.filter((b) =>
+                b.bookingId
+                    .toLowerCase()
+                    .includes(this.filterBookingId.toLowerCase())
+            );
+        }
+
+        if (this.filterDate) {
+            tempBookings = tempBookings.filter(
+                (b) => b.bookingDate === this.filterDate
+            );
+        }
+
+        if (this.filterStatus) {
+            tempBookings = tempBookings.filter(
+                (b) => b.status === this.filterStatus
+            );
+        }
+
+        this.downloadBookings = tempBookings;
+        this.totalPages = Math.ceil(tempBookings.length / this.itemsPerPage);
+        if (this.totalPages === 0) this.totalPages = 1;
+
+        // Reset to page 1 if current page is out of bounds after filter
+        if (this.currentPage > this.totalPages) {
+            this.currentPage = 1;
+        }
+
+        // Pagination Logic
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        this.displayedBookings = tempBookings.slice(
+            startIndex,
+            startIndex + this.itemsPerPage
+        );
+    }
+
+    onFilterChange() {
+        this.currentPage = 1; // Reset to first page on filter change
+        this.applyFilters();
+    }
+
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.applyFilters();
+        }
+    }
+
+    prevPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.applyFilters();
+        }
+    }
+
+    downloadExcel() {
+        //console.log(this.downloadBookings);
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+            this.downloadBookings
+        );
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Bookings');
+        XLSX.writeFile(wb, 'bookings.xlsx');
+    }
+
+    downloadPDF() {
+        console.log(this.downloadBookings);
+        const doc = new jsPDF();
+        const head = [
+            [
+                'Customer ID',
+                'Booking ID',
+                'Date',
+                'Receiver',
+                'Address',
+                'Amount',
+                'Status',
+            ],
+        ];
+        const data = this.downloadBookings.map((b) => [
+            b.customerId,
+            b.bookingId,
+            b.bookingDate,
+            b.receiverName,
+            b.deliveredAddress,
+            b.amount,
+            b.status,
         ]);
 
-        this.isLoading.set(false);
+        autoTable(doc, {
+            head: head,
+            body: data,
+        });
+
+        doc.save('bookings.pdf');
     }
 
-    getStatusBadgeVariant(
-        status: BookingStatus
-    ): BadgeVariant {
-        const variants = {
-            delivered: 'success' as const,
-            'in-transit': 'primary' as const,
-            pending: 'warning' as const,
-            cancelled: 'destructive' as const,
+    // Helper for UI to show if download is available
+    get showDownloadOptions(): boolean {
+        return this.allBookings.length > 10;
+    }
+
+    // --- Feedback Logic ---
+
+    openFeedbackModal(booking: Booking) {
+        this.selectedBooking = booking;
+        this.feedbackRating = 0;
+        this.feedbackSuggestion = '';
+        this.feedbackError = '';
+        this.feedbackSuccess = '';
+        this.isFeedbackModalOpen = true;
+    }
+
+    closeFeedbackModal() {
+        this.isFeedbackModalOpen = false;
+        this.selectedBooking = null;
+    }
+
+    setRating(rating: number) {
+        this.feedbackRating = rating;
+    }
+
+    submitFeedback() {
+        // 1. Validation
+        if (!this.selectedBooking) return;
+
+        if (this.feedbackRating === 0) {
+            this.feedbackError = 'Please select a star rating.';
+            return;
+        }
+
+        // 2. Build Request Object
+        const feedbackData = {
+            bookingId: this.selectedBooking.bookingId,
+            customerId: this.selectedBooking.customerId,
+            rating: this.feedbackRating,
+            feedbackSuggestion: this.feedbackSuggestion,
         };
-        return variants[status] as BadgeVariant;
+
+        console.log('Sending Feedback to Backend:', feedbackData);
+
+        // 3. Prevent duplicate submission (Simulated check)
+        if (this.selectedBooking.hasFeedback) {
+            this.feedbackError = 'Feedback already submitted for this booking.';
+            return;
+        }
+
+        // 4. Simulate API Call Success
+        setTimeout(() => {
+            // Success logic
+            this.selectedBooking!.hasFeedback = true; // Update local state
+            this.feedbackSuccess = 'Feedback submitted successfully!';
+
+            // Close modal after short delay to show success message
+            setTimeout(() => {
+                this.closeFeedbackModal();
+            }, 1500);
+        }, 500);
     }
 
-    getStatusLabel(status: BookingStatus): string {
-        const labels = {
-            delivered: 'Delivered',
-            'in-transit': 'In Transit',
-            pending: 'Pending',
-            cancelled: 'Cancelled',
+    // --- New: Three-dot menu logic & actions ---
+
+    toggleMenu(evt: MouseEvent, id: string) {
+        evt.stopPropagation();
+        this.openMenuId = this.openMenuId === id ? null : id;
+    }
+
+    closeMenu() {
+        this.openMenuId = null;
+    }
+
+    isPaymentCompleted(booking: Booking): boolean {
+        return booking.paymentStatus === 'Paid';
+    }
+
+    onCancelBooking(booking: Booking) {
+        // Show only in UI if not delivered; here we do a frontend-only API placeholder
+        const payload = {
+            bookingId: booking.bookingId,
+            customerId: booking.customerId,
         };
-        return labels[status];
+        console.log('Cancel Booking API payload:', payload);
+
+        // Simulate API success and update UI status to "Cancelled"
+        setTimeout(() => {
+            booking.status = 'Cancelled';
+            this.closeMenu();
+        }, 500);
     }
 
-    formatDate(date: Date): string {
-        return new Intl.DateTimeFormat('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-        }).format(date);
+    onPayBill(booking: Booking) {
+        // Frontend-only payment flow placeholder
+        console.log('Initiating payment flow for Booking:', booking.bookingId);
+
+        // Simulate payment success
+        setTimeout(() => {
+            booking.paymentStatus = 'Paid';
+            this.closeMenu();
+        }, 500);
     }
 
-    setFilter(filter: BookingStatus | 'all'): void {
-        this.selectedFilter.set(filter);
-    }
+    onDownloadInvoice(booking: Booking) {
+        // Generate a single-booking invoice PDF using existing libs
+        const doc = new jsPDF();
 
-    viewBookingDetails(bookingId: string): void {
-        this.router.navigate(['/booking', bookingId]);
+        // Title
+        doc.setFontSize(16);
+        doc.text('Parcel Invoice', 14, 18);
+
+        // Summary details
+        doc.setFontSize(12);
+        const lines = [
+            `Booking ID: ${booking.bookingId}`,
+            `Customer ID: ${booking.customerId}`,
+            `Date: ${booking.bookingDate}`,
+            `Receiver: ${booking.receiverName}`,
+            `Address: ${booking.deliveredAddress}`,
+            `Amount: Rs. ${booking.amount}`,
+            `Status: ${booking.status}`,
+            `Payment: ${booking.paymentStatus ?? 'Pending'}`,
+        ];
+
+        let y = 26;
+        lines.forEach((l) => {
+            doc.text(l, 14, y);
+            y += 6;
+        });
+
+        // Table (optional, single row for clarity)
+        autoTable(doc, {
+            startY: y + 4,
+            head: [
+                [
+                    'Customer ID',
+                    'Booking ID',
+                    'Date',
+                    'Receiver',
+                    'Address',
+                    'Amount',
+                    'Status',
+                ],
+            ],
+            body: [
+                [
+                    booking.customerId,
+                    booking.bookingId,
+                    booking.bookingDate,
+                    booking.receiverName,
+                    booking.deliveredAddress,
+                    booking.amount.toString(),
+                    booking.status,
+                ],
+            ],
+        });
+
+        doc.save(`invoice_${booking.bookingId}.pdf`);
+        this.closeMenu();
     }
 }

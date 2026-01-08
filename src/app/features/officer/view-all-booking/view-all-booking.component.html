@@ -1,0 +1,102 @@
+<app-officer-layout>
+    <div class="container">
+        <h2>View All Bookings – Officer</h2>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input
+                placeholder="Customer ID"
+                [(ngModel)]="filterCustomerId"
+                (input)="onFilterChange()"
+            />
+            <input
+                placeholder="Booking ID"
+                [(ngModel)]="filterBookingId"
+                (input)="onFilterChange()"
+            />
+            <input
+                type="date"
+                [(ngModel)]="filterDate"
+                (change)="onFilterChange()"
+            />
+            <select [(ngModel)]="filterStatus" (change)="onFilterChange()">
+                <option value="">All Status</option>
+                <option>Pending</option>
+                <option>In Process</option>
+                <option>Delivered</option>
+                <option>Cancelled</option>
+            </select>
+        </div>
+
+        <!-- Download -->
+        <div class="download-actions" *ngIf="showDownloadOptions">
+            <button class="excel" (click)="downloadExcel()">
+                Download Excel
+            </button>
+            <button class="pdf" (click)="downloadPDF()">Download PDF</button>
+        </div>
+
+        <!-- Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Customer Name</th>
+                    <th>Booking ID</th>
+                    <th>Date</th>
+                    <th>Receiver</th>
+                    <th>Address</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let booking of displayedBookings">
+                    <td>{{ booking.customerId }}</td>
+                    <td>{{ booking.customerName }}</td>
+                    <td>{{ booking.bookingId }}</td>
+                    <td>{{ booking.bookingDate }}</td>
+                    <td>{{ booking.receiverName }}</td>
+                    <td>{{ booking.deliveredAddress }}</td>
+                    <td>Rs. {{ booking.amount }}</td>
+                    <td>
+                        <select
+                            [(ngModel)]="booking.status"
+                            (change)="onStatusChange(booking)"
+                        >
+                            <option>Pending</option>
+                            <option>In Process</option>
+                            <option>Delivered</option>
+                            <option>Cancelled</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button
+                            *ngIf="booking.feedback"
+                            class="btn-feedback"
+                            (click)="viewFeedback(booking)"
+                        >
+                            View Feedback
+                        </button>
+                        <span *ngIf="!booking.feedback">No Feedback</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">
+                Previous
+            </button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button
+                (click)="nextPage()"
+                [disabled]="currentPage === totalPages"
+            >
+                Next
+            </button>
+        </div>
+    </div>
+</app-officer-layout>

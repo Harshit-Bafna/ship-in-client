@@ -35,7 +35,7 @@ const USERS_DB_RESPONSE: ILoginResponse[] = [
             name: 'Harish Bendale',
             email: 'harish@gmail.com',
             userCode: 'ADMI000002',
-            role: EUserRole.ADMIN,
+            role: EUserRole.OFFICER,
         },
     },
 ];
@@ -49,7 +49,7 @@ export const USERS_DB = [
     {
         email: 'harish@gmail.com',
         userCode: 'ADMI000002',
-        password: 'ADMIN',
+        password: 'Officer@1',
     },
 ];
 

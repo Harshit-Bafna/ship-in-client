@@ -7,15 +7,16 @@ import { ITrackingResponse } from '../../../core/interfaces/response/trackingRes
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { OfficerLayoutComponent } from '../../../layout/main-layout/officer-layout/officer-layout.component';
 
 @Component({
     selector: 'app-tracking',
     standalone: true,
     templateUrl: './tracking.component.html',
     styleUrls: ['./tracking.component.css'],
-    imports: [CustomerLayoutComponent, FormsModule, DatePipe],
+    imports: [FormsModule, DatePipe, OfficerLayoutComponent],
 })
-export class CustomerTrackingComponent implements OnInit {
+export class OfficerTrackingComponent implements OnInit {
     trackingId = '';
 
     isSearching = signal(false);

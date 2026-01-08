@@ -19,11 +19,6 @@ import { EUserRole } from '../../../core/enums/EUserRole';
 export class LoginComponent {
     isLoading = signal(false);
     errorMessage = signal('');
-    isPasswordVisible = signal(false);
-
-    togglePasswordVisibility(): void {
-        this.isPasswordVisible.update((v) => !v);
-    }
 
     private passwordPattern =
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/;
@@ -61,7 +56,6 @@ export class LoginComponent {
                 } else if (responseData.role === EUserRole.OFFICER) {
                     this.router.navigateByUrl('/officer');
                 }
-    
             } else {
                 this.errorMessage.set(response.message);
             }
