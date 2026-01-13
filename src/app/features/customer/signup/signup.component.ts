@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/service/auth.service';
+import { ApiResponse } from '../../../core/interfaces/ApiResponse';
 
 interface CountryCode {
     code: string;
@@ -108,7 +109,7 @@ export class SignupComponent {
         allowNotifications: new FormControl(false),
     });
 
-    constructor(private router: Router, private authService: AuthService) {}
+    constructor(private router: Router, private authService: AuthService) { }
 
     onSubmit(): void {
         if (this.signupForm.valid) {
@@ -124,7 +125,7 @@ export class SignupComponent {
             this.errorMessage.set('');
             this.successMessage.set('');
 
-            const response = this.authService.registerCustomer({
+            this.authService.registerCustomer({
                 name: this.signupForm.value.name!,
                 email: this.signupForm.value.email!,
                 password: password,
@@ -144,19 +145,19 @@ export class SignupComponent {
                 country: this.signupForm.value.country!,
                 allowNotifications:
                     this.signupForm.value.allowNotifications || false,
-            });
-
-            setTimeout(() => {
-                if (response.success) {
+            }).subscribe({
+                next: (response: ApiResponse) => {
                     this.successMessage.set('Account created successfully!');
                     setTimeout(() => {
                         this.router.navigate(['/login']);
                     }, 1000);
-                } else {
-                    this.errorMessage.set(response.message);
+                    this.isLoading.set(false);
+                },
+                error: (error) => {
+                    this.errorMessage.set(error.error?.message || 'Registration failed');
+                    this.isLoading.set(false);
                 }
-                this.isLoading.set(false);
-            }, 1500);
+            });
         } else {
             Object.keys(this.signupForm.controls).forEach((key) => {
                 this.signupForm.get(key)?.markAsTouched();

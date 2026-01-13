@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { AuthService, IUserDetails } from '../../../core/service/auth.service';
 import { CustomerService } from '../../../core/service/customer.service';
+import { ApiResponse } from '../../../core/interfaces/ApiResponse';
 import { ICustomerProfileDetailsResponse } from '../../../core/interfaces/response/customerProfileDetails';
 import { CustomerLayoutComponent } from "../../../layout/main-layout/customer-layout/customer-layout.component";
 
@@ -17,16 +18,19 @@ export class CustomerProfileComponent implements OnInit {
     constructor(
         private customerService: CustomerService,
         private authService: AuthService
-    ) {}
+    ) { }
 
     ngOnInit() {
         const user = this.authService.getUserDetails().data as IUserDetails;
 
-        const customerDetails = this.customerService.getCustomerDetails(
-            user.id
-        );
-        if (customerDetails.success && customerDetails.data) {
-            this.user = customerDetails.data as ICustomerProfileDetailsResponse;
+        if (user && user.id) {
+            this.customerService.getCustomerDetails(user.id).subscribe({
+                next: (customerDetails: ApiResponse) => {
+                    if (customerDetails.success && customerDetails.data) {
+                        this.user = customerDetails.data as ICustomerProfileDetailsResponse;
+                    }
+                }
+            });
         }
     }
 }
