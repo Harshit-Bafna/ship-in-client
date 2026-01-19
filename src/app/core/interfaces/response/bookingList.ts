@@ -1,13 +1,13 @@
 import { EBookingStatus } from "../../enums/EBookingStatus";
 
 export interface IBookingList {
-    customerId: string;
-    bookingId: string;
+    id: number;
+    trakingId: string;
     bookingDate: string;
     receiverName: string;
-    deliveredAddress: string;
+    deliveryAddress: string;
     amount: number;
-    status: EBookingStatus;
+    bookingStatus: EBookingStatus;
+    isPaid: boolean;
     hasFeedback?: boolean;
-    paymentStatus?: 'Paid' | 'Pending';
 }

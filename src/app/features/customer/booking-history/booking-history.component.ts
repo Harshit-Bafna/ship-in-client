@@ -6,6 +6,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
 import { Router } from '@angular/router';
+import { AuthService, IUserDetails } from '../../../core/service/auth.service';
 import { BookingService } from '../../../core/service/booking.service';
 import { IBookingList } from '../../../core/interfaces/response/bookingList';
 import { EBookingStatus } from '../../../core/enums/EBookingStatus';
@@ -44,19 +45,24 @@ export class BookingHistoryComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private bookingService: BookingService
-    ) {}
+        private bookingService: BookingService,
+        private authService: AuthService
+    ) { }
 
     ngOnInit(): void {
-        const response = this.bookingService.getAllBookings();
-        if (response.success && response.data) {
-            console.log(response.data);
-
-            this.allBookings = response.data as IBookingList[];
-        } else {
-            console.error('Failed to load bookings:', response.message);
-        }
-        this.applyFilters();
+        this.bookingService.getAllBookings().subscribe({
+            next: (response) => {
+                if (response.success && response.data) {
+                    this.allBookings = response.data as IBookingList[];
+                    this.applyFilters();
+                } else {
+                    console.error('Failed to load bookings:', response.message);
+                }
+            },
+            error: (err) => {
+                console.error('Error loading bookings:', err);
+            }
+        });
     }
 
     applyFilters() {
@@ -64,7 +70,7 @@ export class BookingHistoryComponent implements OnInit {
 
         if (this.filterBookingId) {
             tempBookings = tempBookings.filter((b) =>
-                b.bookingId
+                b.trakingId
                     .toLowerCase()
                     .includes(this.filterBookingId.toLowerCase())
             );
@@ -78,7 +84,7 @@ export class BookingHistoryComponent implements OnInit {
 
         if (this.filterStatus) {
             tempBookings = tempBookings.filter(
-                (b) => b.status === this.filterStatus
+                (b) => b.bookingStatus === this.filterStatus as EBookingStatus
             );
         }
 
@@ -126,7 +132,6 @@ export class BookingHistoryComponent implements OnInit {
     }
 
     downloadPDF() {
-        console.log(this.downloadBookings);
         const doc = new jsPDF();
         const head = [
             [
@@ -140,13 +145,13 @@ export class BookingHistoryComponent implements OnInit {
             ],
         ];
         const data = this.downloadBookings.map((b) => [
-            b.customerId,
-            b.bookingId,
+            this.getCustomerId(),
+            b.trakingId,
             b.bookingDate,
             b.receiverName,
-            b.deliveredAddress,
+            b.deliveryAddress,
             b.amount,
-            b.status,
+            b.bookingStatus,
         ]);
 
         autoTable(doc, {
@@ -188,8 +193,8 @@ export class BookingHistoryComponent implements OnInit {
         }
 
         const feedbackData = {
-            bookingId: this.selectedBooking.bookingId,
-            customerId: this.selectedBooking.customerId,
+            bookingId: this.selectedBooking.trakingId,
+            customerId: this.getCustomerId(),
             rating: this.feedbackRating,
             feedbackSuggestion: this.feedbackSuggestion,
         };
@@ -221,28 +226,28 @@ export class BookingHistoryComponent implements OnInit {
     }
 
     isPaymentCompleted(booking: IBookingList): boolean {
-        return booking.paymentStatus === 'Paid';
+        return booking.isPaid;
     }
 
     onCancelBooking(booking: IBookingList) {
         const payload = {
-            bookingId: booking.bookingId,
-            customerId: booking.customerId,
+            bookingId: booking.trakingId,
+            customerId: this.getCustomerId(),
         };
         console.log('Cancel Booking API payload:', payload);
 
         setTimeout(() => {
-            booking.status = EBookingStatus.CANCELLED;
+            booking.bookingStatus = EBookingStatus.CANCELLED;
             this.closeMenu();
         }, 500);
     }
 
     onPayBill(booking: IBookingList) {
-        console.log('Initiating payment flow for Booking:', booking.bookingId);
+        console.log('Initiating payment flow for Booking:', booking.trakingId);
 
         setTimeout(() => {
             this.router.navigate(['/customer/pay-bill'], {
-                state: { bookingId: booking.bookingId, amount: booking.amount },
+                state: { bookingId: booking.trakingId, amount: booking.amount },
             });
         }, 500);
     }
@@ -255,14 +260,14 @@ export class BookingHistoryComponent implements OnInit {
 
         doc.setFontSize(12);
         const lines = [
-            `Booking ID: ${booking.bookingId}`,
-            `Customer ID: ${booking.customerId}`,
+            `Booking ID: ${booking.trakingId}`,
+            `Customer ID: ${this.getCustomerId()}`,
             `Date: ${booking.bookingDate}`,
             `Receiver: ${booking.receiverName}`,
-            `Address: ${booking.deliveredAddress}`,
+            `Address: ${booking.deliveryAddress}`,
             `Amount: Rs. ${booking.amount}`,
-            `Status: ${booking.status}`,
-            `Payment: ${booking.paymentStatus ?? 'Pending'}`,
+            `Status: ${booking.bookingStatus}`,
+            `Payment: ${booking.isPaid ? 'Paid' : 'Pending'}`,
         ];
 
         let y = 26;
@@ -286,25 +291,30 @@ export class BookingHistoryComponent implements OnInit {
             ],
             body: [
                 [
-                    booking.customerId,
-                    booking.bookingId,
+                    this.getCustomerId(),
+                    booking.trakingId,
                     booking.bookingDate,
                     booking.receiverName,
-                    booking.deliveredAddress,
+                    booking.deliveryAddress,
                     booking.amount.toString(),
-                    booking.status,
+                    booking.bookingStatus,
                 ],
             ],
         });
 
-        doc.save(`invoice_${booking.bookingId}.pdf`);
+        doc.save(`invoice_${booking.trakingId}.pdf`);
         this.closeMenu();
     }
 
     onViewBookingDetails(booking: IBookingList) {
         this.router.navigateByUrl(
-            `/customer/tracking?bookingId=${booking.bookingId}`
+            `/customer/tracking?bookingId=${booking.trakingId}`
         );
         this.closeMenu();
+    }
+
+    private getCustomerId(): number {
+        const userDetails = this.authService.getUserDetails();
+        return (userDetails.data as IUserDetails)?.id || 0;
     }
 }

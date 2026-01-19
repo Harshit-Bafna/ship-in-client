@@ -1,201 +1,136 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { EBookingStatus } from '../enums/EBookingStatus';
-import { EDeliveryType } from '../enums/EDeliveryType';
-import { EPackagingType } from '../enums/EPackagingType';
-import { EPaymentMethod } from '../enums/EPaymentMethod';
-import { EPaymentStatus } from '../enums/EPaymentStatus';
 import { ITrackingResponse } from '../interfaces/response/trackingResponse';
 import { ApiResponse } from '../interfaces/ApiResponse';
 import { IBookingList } from '../interfaces/response/bookingList';
-
-const TRAKING_DB: ITrackingResponse[] = [
-    {
-        id: 1,
-        bookingId: 'BOOK-2026-0001',
-        trackingId: 'TRK-IND-987654321',
-        currentStatus: EBookingStatus.OUT_FOR_DELIVERY,
-        currentLocation: 'Bangalore Distribution Center',
-        estimatedDeliveryDate: new Date('2026-01-12'),
-        progressPercentage: 75,
-
-        senderDetails: {
-            name: 'Rahul Sharma',
-            phone: '+91-9876543210',
-            email: 'rahul.sharma@gmail.com',
-            houseNo: '221B',
-            addressLine1: 'MG Road',
-            addressLine2: 'Near Metro Station',
-            landmark: 'Opposite Mall',
-            city: 'Bangalore',
-            state: 'Karnataka',
-            pincode: '560001',
-            country: 'India',
-        },
-
-        receiverDetails: {
-            id: 101,
-            name: 'Harshit Bafna',
-            houseNo: '12A',
-            addressLine1: 'Park Street',
-            addressLine2: '2nd Floor',
-            landmark: 'Near City Hospital',
-            city: 'Kolkata',
-            state: 'West Bengal',
-            pincode: '700016',
-            country: 'India',
-            phoneNumber: '+91-9123456789',
-            alternatePhoneNumber: '+91-9988776655',
-            email: 'harshit.bafna@gmail.com',
-        },
-
-        parcelDetails: {
-            id: 501,
-            packagingType: EPackagingType.BASIC,
-            deliveryType: EDeliveryType.EXPRESS,
-            estimatedPickupDate: new Date('2026-01-08'),
-            estimatedDeliveryDate: new Date('2026-01-12'),
-
-            actualPickupDate: new Date('2026-01-08'),
-            pickUpTime: new Date('2026-01-08T10:30:00'),
-
-            actualDeliveryDate: undefined,
-            dropOffTime: undefined,
-
-            weightInGrams: 2500,
-        },
-
-        paymentDetails: {
-            id: 9001,
-            transactionId: 'TXN-456789123',
-
-            baseRate: 200,
-            packagingRate: 50,
-            adminFee: 30,
-            weightCharge: 120,
-            deliveryCharge: 100,
-            taxAmount: 45,
-            finalAmount: 545,
-
-            paymentStatus: EPaymentStatus.PAID,
-            paymentMethod: EPaymentMethod.CREDIT_CARD,
-            paymentAt: new Date('2026-01-08T11:00:00'),
-
-            cardLastFour: '4321',
-            cardBrand: 'VISA',
-            cardHolderName: 'Rahul Sharma',
-
-            isRefund: null,
-        },
-
-        statusHistory: [
-            {
-                label: EBookingStatus.BOOKED,
-                timestamp: new Date('2026-01-07T09:00:00'),
-                location: 'Online Portal',
-                description: 'Parcel booking confirmed',
-                completed: true,
-            },
-            {
-                label: EBookingStatus.PICKED_UP,
-                timestamp: new Date('2026-01-08T10:30:00'),
-                location: 'Bangalore',
-                description: 'Parcel picked up from sender',
-                completed: true,
-            },
-            {
-                label: EBookingStatus.IN_TRANSIT,
-                timestamp: new Date('2026-01-09T14:00:00'),
-                location: 'Hyderabad Hub',
-                description: 'Parcel in transit to destination city',
-                completed: true,
-            },
-            {
-                label: EBookingStatus.OUT_FOR_DELIVERY,
-                timestamp: new Date('2026-01-11T08:30:00'),
-                location: 'Kolkata Delivery Center',
-                description: 'Courier out for final delivery',
-                completed: true,
-            },
-            {
-                label: EBookingStatus.DELIVERED,
-                description: 'Parcel will be delivered soon',
-                completed: false,
-            },
-        ],
-    },
-];
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { BookingParcelRequest } from '../interfaces/request/bookingParcelRequest';
 
 @Injectable({ providedIn: 'root' })
 export class BookingService {
-    getTrackingDetails(bookingId: string): ApiResponse {
-        const trackingInfo = TRAKING_DB.find(
-            (track) => track.bookingId === bookingId
+    private apiUrl = `${environment.apiUrl}/booking`;
+    private trackingUrl = `${environment.apiUrl}/traking`;
+
+    constructor(private http: HttpClient) { }
+
+    getTrackingDetails(bookingId: string): Observable<ApiResponse> {
+        return this.http.get<any>(`${this.trackingUrl}/${bookingId}`).pipe(
+            map(backendData => {
+                // Map backend DTO (with typos) to frontend interface
+                const trackingData: ITrackingResponse = {
+                    id: 0, // Placeholder, backend main DTO doesn't have ID
+                    bookingId: backendData.parcelDeatils?.bookingId || bookingId,
+                    trackingId: backendData.parcelDeatils?.bookingId || bookingId, // Use bookingId as trackingId for now
+                    currentStatus: backendData.parcelDeatils?.bookingStatus,
+                    currentLocation: '', // Backend doesn't seem to provide current location directly
+                    estimatedDeliveryDate: new Date(), // Placeholder
+                    progressPercentage: this.calculateProgress(backendData.parcelDeatils?.bookingStatus),
+
+                    senderDetails: backendData.senderDetails,
+                    receiverDetails: backendData.recieverDetails, // Fix typo
+                    parcelDetails: {
+                        ...backendData.parcelDeatils,
+                        weightInGrams: backendData.parcelDeatils?.weight, // Map weight
+                        estimatedDeliveryDate: new Date(), // Placeholder
+                        estimatedPickupDate: new Date() // Placeholder
+                    },
+                    paymentDetails: {
+                        ...backendData.paymentDetails,
+                        paymentStatus: backendData.paymentDetails?.paymentStatus || 'Pending', // Ensure enum/string match
+                        // Backend payment details might need more mapping if structure differs significantly
+                        id: 0, // Placeholder
+                        transactionId: '', // Placeholder
+                        baseRate: 0,
+                        packagingRate: 0,
+                        adminFee: 0,
+                        weightCharge: 0,
+                        deliveryCharge: 0,
+                        taxAmount: 0,
+                        finalAmount: backendData.paymentDetails?.amount || 0,
+                    },
+                    statusHistory: backendData.history ? backendData.history.map((h: any) => ({
+                        label: h.status,
+                        timestamp: h.dateTime,
+                        description: h.description || '',
+                        completed: true // Assumption
+                    })) : []
+                };
+
+                return {
+                    statusCode: 200,
+                    success: true,
+                    message: 'Tracking details fetched successfully',
+                    data: trackingData
+                };
+            })
         );
-
-        if (!trackingInfo) {
-            return {
-                statusCode: 404,
-                success: false,
-                message: 'Tracking details not found',
-            };
-        }
-
-        return {
-            statusCode: 200,
-            success: true,
-            data: trackingInfo,
-            message: 'Tracking details fetched successfully',
-        };
     }
 
-    getAllBookings(): {
-        success: boolean;
-        statusCode: number;
-        message: string;
-        data?: IBookingList[] | undefined;
-    } {
-        const bookings: IBookingList[] = [];
-        const statuses: EBookingStatus[] = Object.values(EBookingStatus);
-
-        const getRandomDate = (start: Date, end: Date): string => {
-            const date = new Date(
-                start.getTime() +
-                    Math.random() * (end.getTime() - start.getTime())
-            );
-            return date.toISOString().split('T')[0];
-        };
-
-        bookings.push({
-            customerId: 'CUST-1001',
-            bookingId: 'BOOK-2026-0001',
-            bookingDate: '2025-12-15',
-            receiverName: 'Amit Kumar',
-            deliveredAddress: 'Mumbai, India',
-            amount: 350,
-            status: EBookingStatus.OUT_FOR_DELIVERY,
-            hasFeedback: false,
-        });
-
-        for (let i = 1; i <= 50; i++) {
-            bookings.push({
-                customerId: `CUST-${1000 + i}`,
-                bookingId: `BOOK-2025-${String(i).padStart(4, '0')}`,
-                bookingDate: getRandomDate(new Date(2024, 0, 1), new Date()),
-                receiverName: `Receiver ${i}`,
-                deliveredAddress: `${i} Main St, City ${i}`,
-                amount: Math.floor(Math.random() * 500) + 50,
-                status: statuses[Math.floor(Math.random() * statuses.length)],
-                hasFeedback: false,
-
-                paymentStatus: 'Pending',
-            });
+    private calculateProgress(status: EBookingStatus): number {
+        switch (status) {
+            case EBookingStatus.BOOKED: return 25;
+            case EBookingStatus.PICKED_UP: return 50;
+            case EBookingStatus.IN_TRANSIT: return 75;
+            case EBookingStatus.OUT_FOR_DELIVERY: return 90;
+            case EBookingStatus.DELIVERED: return 100;
+            default: return 0;
         }
+    }
 
-        return {
-            statusCode: 200,
-            success: true,
-            data: bookings,
-            message: 'All bookings fetched successfully',
-        };
+    getAllBookings(
+        bookingStatus: string = '',
+        bookingKeyword: string = '',
+        date: string = '',
+        page: number = 0,
+        size: number = 10
+    ): Observable<any> {
+        let params = new HttpParams()
+            .set('page', page.toString())
+            .set('size', size.toString());
+
+        if (bookingStatus) params = params.set('bookingStatus', bookingStatus);
+        if (bookingKeyword) params = params.set('bookingKeyword', bookingKeyword);
+        if (date) params = params.set('date', date);
+
+        return this.http.get<any>(`${this.apiUrl}/history/customer`, { params }).pipe(
+            map(pageData => {
+                // Map Page<BookingHistoryCustomerResponseDto> content to IBookingList[]
+                const mappedContent: IBookingList[] = pageData.content.map((item: any) => ({
+                    id: item.id,
+                    trakingId: item.trakingId,
+                    bookingDate: item.bookingDate,
+                    receiverName: item.receiverName,
+                    deliveryAddress: item.deliveryAddress,
+                    amount: item.amount,
+                    bookingStatus: item.bookingStatus,
+                    isPaid: item.isPaid,
+                    hasFeedback: false
+                }));
+
+                return {
+                    statusCode: 200,
+                    success: true,
+                    message: 'All bookings fetched successfully',
+                    data: mappedContent,
+                    // Pass pagination metadata if component needs it
+                    totalPages: pageData.totalPages,
+                    totalElements: pageData.totalElements
+                };
+            })
+        );
+    }
+
+    createBooking(bookingData: BookingParcelRequest): Observable<ApiResponse> {
+        return this.http.post<any>(`${this.apiUrl}/create/customer`, bookingData).pipe(
+            map(response => ({
+                statusCode: 201,
+                success: true,
+                message: 'Booking created successfully',
+                data: response // This contains { bookingId: "BOOK-...", id: 123 }
+            }))
+        );
     }
 }

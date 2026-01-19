@@ -10,6 +10,9 @@ import { Router } from '@angular/router';
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
 import { EDeliveryType } from '../../../core/enums/EDeliveryType';
 import { EPackagingType } from '../../../core/enums/EPackagingType';
+import { BookingParcelRequest } from '../../../core/interfaces/request/bookingParcelRequest';
+import { AuthService } from '../../../core/service/auth.service';
+import { BookingService } from '../../../core/service/booking.service';
 
 @Component({
     selector: 'app-book-parcel',
@@ -56,7 +59,7 @@ export class BookParcelComponent {
         ]),
         alternatePhoneNumber: new FormControl(
             '',
-            Validators.pattern(/^\d{10}$/)
+            Validators.pattern(/^$|^\d{10}$/)
         ),
         email: new FormControl('', [Validators.required, Validators.email]),
 
@@ -81,7 +84,11 @@ export class BookParcelComponent {
         parcelDropoffTime: new FormControl('', Validators.required),
     });
 
-    constructor(private router: Router) {
+    constructor(
+        private router: Router,
+        private authService: AuthService,
+        private bookingService: BookingService
+    ) {
         this.bookingForm.valueChanges.subscribe(() => {
             this.calculateCost();
         });
@@ -189,18 +196,70 @@ export class BookParcelComponent {
 
         this.processing.set(true);
 
-        setTimeout(() => {
-            const bookingData = this.prepareBookingData();
-            console.log('Booking Data:', bookingData);
+        const bookingData = this.prepareBookingData();
+        console.log('Sending Booking Data:', bookingData);
 
-            const now = new Date();
-            this.bookingId.set(
-                `BK-${now.getFullYear()}-${String(now.getTime()).slice(-6)}`
-            );
+        // We need to fetch customerId from AuthService
+        const userDetails = this.authService.getUserDetails();
+        const customerId = (userDetails.data as any)?.id || 0;
 
-            this.processing.set(false);
-            this.showSuccess.set(true);
-        }, 1500);
+        // Calculate tax amount
+        const subtotal = this.baseRate + this.weightCharge() + this.deliveryCharge() + this.packingCharge();
+        const taxAmount = Math.round(subtotal * this.taxRate * 100) / 100;
+
+        // Construct BookingParcelRequest object matching backend DTO
+        const requestPayload: BookingParcelRequest = {
+            customerId: customerId,
+            parcel: {
+                weightInGrams: bookingData.parcelRequest.parcelWeightInGram!,
+                description: bookingData.parcelRequest.parcelContentsDescription!,
+                expectedPickupTime: bookingData.parcelRequest.parcelPickupTime!,
+                expectedDropofTime: bookingData.parcelRequest.parcelDropoffTime!,
+                baseRate: this.baseRate,
+                packagingRate: this.packingCharge(),
+                adminFee: 0, // Default to 0 as not calculated in frontend
+                weightCharge: this.weightCharge(),
+                deliveryCharge: this.deliveryCharge(),
+                taxAmount: taxAmount,
+                totalCost: this.totalCost()
+            },
+            receiverDetails: {
+                name: bookingData.receiverDetails.name!,
+                email: bookingData.receiverDetails.email!, // Added email
+                mobileCountryCode: '+91', // Hardcoded for now
+                mobileNumber: bookingData.receiverDetails.phoneNumber!,
+                alternateMobileCountryCode: '+91', // Hardcoded
+                alternateNumber: bookingData.receiverDetails.alternatePhoneNumber || undefined,
+                houseNo: bookingData.receiverDetails.houseNo!, // Added houseNo
+                addressLine1: bookingData.receiverDetails.addressLine1!,
+                addressLine2: bookingData.receiverDetails.addressLine2,
+                landmark: bookingData.receiverDetails.landmark,
+                city: bookingData.receiverDetails.city!,
+                state: bookingData.receiverDetails.state!,
+                pinCode: bookingData.receiverDetails.pincode!,
+                country: bookingData.receiverDetails.country!
+            },
+            packagingType: bookingData.parcelRequest.packagingType!,
+            deliveryType: bookingData.parcelRequest.deliveryType!,
+            deliveryInstruction: ''
+        };
+
+        this.bookingService.createBooking(requestPayload).subscribe({
+            next: (response) => {
+                console.log('Booking successful:', response);
+                const responseData = response.data as any;
+                if (responseData && responseData.bookingId) {
+                    this.bookingId.set(responseData.bookingId);
+                }
+                this.processing.set(false);
+                this.showSuccess.set(true);
+            },
+            error: (err) => {
+                console.error('Booking failed:', err);
+                this.errorMsg.set('Booking failed: ' + (err.error?.message || err.error || err.message));
+                this.processing.set(false);
+            }
+        });
     }
 
     prepareBookingData() {

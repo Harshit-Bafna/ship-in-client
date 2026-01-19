@@ -49,11 +49,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Customer ID</th>
                         <th>Booking ID</th>
                         <th>Booking Date</th>
                         <th>Receiver Name</th>
-                        <th>Delivered Address</th>
+                        <th>Delivery Address</th>
                         <th>Amount</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -62,26 +61,25 @@
                 <tbody>
                     @for (booking of displayedBookings; track booking) {
                     <tr>
-                        <td>{{ booking.customerId }}</td>
-                        <td>{{ booking.bookingId }}</td>
+                        <td>{{ booking.trakingId }}</td>
                         <td>{{ booking.bookingDate }}</td>
                         <td>{{ booking.receiverName }}</td>
-                        <td>{{ booking.deliveredAddress }}</td>
+                        <td>{{ booking.deliveryAddress }}</td>
                         <td>Rs. {{ booking.amount }}</td>
                         <td>
                             <span
                                 class="status-badge"
                                 [ngClass]="
-                                    booking.status
+                                    booking.bookingStatus
                                         .toLowerCase()
                                         .replace(' ', '-')
                                 "
                             >
-                                {{ booking.status }}
+                                {{ booking.bookingStatus }}
                             </span>
                         </td>
                         <td class="actions-cell">
-                            @if ( booking.status === deliveredStatus &&
+                            @if ( booking.bookingStatus === deliveredStatus &&
                             !booking.hasFeedback ) {
                             <button
                                 (click)="openFeedbackModal(booking)"
@@ -97,12 +95,12 @@
                                 type="button"
                                 class="menu-trigger"
                                 aria-label="More options"
-                                (click)="toggleMenu($event, booking.bookingId)"
+                                (click)="toggleMenu($event, booking.trakingId)"
                             >
                                 ⋮
                             </button>
 
-                            @if (openMenuId === booking.bookingId) {
+                            @if (openMenuId === booking.trakingId) {
                             <div class="menu-panel">
                                 <button
                                     type="button"
@@ -112,8 +110,8 @@
                                     View Booking Details
                                 </button>
 
-                                @if ( booking.status !== deliveredStatus &&
-                                booking.status !== cancelledStatus ) {
+                                @if ( booking.bookingStatus !== deliveredStatus &&
+                                booking.bookingStatus !== cancelledStatus ) {
                                 <button
                                     type="button"
                                     class="menu-item"
@@ -121,7 +119,7 @@
                                 >
                                     Cancel Parcel Booking
                                 </button>
-                                } @if ( booking.status !== deliveredStatus &&
+                                } @if ( booking.bookingStatus !== deliveredStatus &&
                                 !isPaymentCompleted(booking) ) {
                                 <button
                                     type="button"
@@ -176,7 +174,7 @@
                 <div class="booking-details">
                     <p>
                         <strong>Booking ID:</strong>
-                        {{ selectedBooking.bookingId }}
+                        {{ selectedBooking.trakingId }}
                     </p>
                     <p>
                         <strong>Date:</strong>
@@ -188,7 +186,7 @@
                     </p>
                     <p>
                         <strong>Address:</strong>
-                        {{ selectedBooking.deliveredAddress }}
+                        {{ selectedBooking.deliveryAddress }}
                     </p>
                 </div>
                 }

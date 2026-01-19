@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CustomerLayoutComponent } from '../../../layout/main-layout/customer-layout/customer-layout.component';
+import { PaymentService, ParcelPaymentRequest } from '../../../core/service/payment.service';
 import jsPDF from 'jspdf';
 
 @Component({
@@ -44,7 +45,7 @@ export class PayBillComponent implements OnInit {
         ]),
     });
 
-    constructor(private router: Router) {}
+    constructor(private router: Router, private paymentService: PaymentService) { }
 
     ngOnInit() {
         const navigation = this.router.getCurrentNavigation();
@@ -131,29 +132,59 @@ export class PayBillComponent implements OnInit {
         this.processing.set(true);
         this.errorMsg.set('');
 
-        setTimeout(() => {
-            if (this.paymentForm.value.cvv === '000') {
-                this.errorMsg.set('Payment declined: Invalid CVV');
-                this.processing.set(false);
-                return;
-            }
-
-            const now = new Date();
-            this.paymentResult = {
-                paymentId: `PAY-${now.getFullYear()}-${now.getTime()}`,
-                transactionId: `TXN-${Math.floor(
-                    100000000 + Math.random() * 900000000
-                )}`,
-                transactionDate: now.toLocaleString('en-IN'),
-                bookingId: this.bookingId,
-                amount: this.amount,
-                cardholderName: this.paymentForm.value.cardholderName,
-                maskedCard: this.getMaskedCard(),
-            };
-
+        if (this.paymentForm.value.cvv === '000') {
+            this.errorMsg.set('Payment declined: Invalid CVV');
             this.processing.set(false);
-            this.showSuccess.set(true);
-        }, 1500);
+            return;
+        }
+
+        const now = new Date();
+        const transactionId = `TXN-${Math.floor(100000000 + Math.random() * 900000000)}`;
+
+        const cardNum = this.paymentForm.value.cardNumber || '';
+        const last4 = cardNum.slice(-4);
+
+        // Convert MM/YY to YYYY-MM-DD
+        const expiry = this.paymentForm.value.expiry || '';
+        const [mm, yy] = expiry.split('/');
+        const year = 2000 + parseInt(yy, 10);
+        const month = parseInt(mm, 10);
+        // Set to last day of the month
+        const lastDay = new Date(year, month, 0).getDate();
+        const expiryDate = `${year}-${month.toString().padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`;
+
+        const paymentRequest: ParcelPaymentRequest = {
+            bookingId: this.bookingId,
+            transactionId: transactionId,
+            paymentStatus: 'COMPLETED',
+            paymentMethod: 'CREDIT_CARD', // Default
+            cardHolderName: this.paymentForm.value.cardholderName!,
+            cardBrand: 'Visa', // Simplification - Matches Backend Mock Data 'Visa'
+            last4digits: last4,
+            expiryDate: expiryDate
+        };
+
+        this.paymentService.payForParcel(paymentRequest).subscribe({
+            next: (response) => {
+                this.paymentResult = {
+                    paymentId: `PAY-${now.getFullYear()}-${now.getTime()}`, // Mock ID for display
+                    transactionId: transactionId,
+                    transactionDate: now.toLocaleString('en-IN'),
+                    bookingId: this.bookingId,
+                    amount: this.amount,
+                    cardholderName: this.paymentForm.value.cardholderName,
+                    maskedCard: this.getMaskedCard(),
+                };
+                this.processing.set(false);
+                this.showSuccess.set(true);
+            },
+            error: (err) => {
+                console.error('Payment failed', err);
+                const msg = err.error?.message || err.error || err.message || 'Payment processing failed';
+                this.errorMsg.set('Payment Failed: ' + msg);
+                this.processing.set(false);
+            }
+        });
     }
 
     getMaskedCard(): string {

@@ -25,7 +25,7 @@ export class OfficerTrackingComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private bookingService: BookingService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         const queryId = this.route.snapshot.queryParamMap.get('bookingId');
@@ -47,28 +47,24 @@ export class OfficerTrackingComponent implements OnInit {
         this.notFound.set(false);
         this.trackingData.set(null);
 
-        setTimeout(() => {
-            try {
-                const response = this.bookingService.getTrackingDetails(
-                    bookingId.trim()
-                );
-
-                if (!response || !response.success || !response.data) {
+        this.bookingService.getTrackingDetails(bookingId.trim()).subscribe({
+            next: (response) => {
+                this.isSearching.set(false);
+                if (response && response.success && response.data) {
+                    this.trackingData.set(response.data as ITrackingResponse);
+                    this.notFound.set(false);
+                } else {
                     this.notFound.set(true);
                     this.trackingData.set(null);
-                } else {
-                    const trackingData = response.data as ITrackingResponse;
-                    this.trackingData.set(trackingData);
-                    this.notFound.set(false);
                 }
-            } catch (error) {
+            },
+            error: (error) => {
+                this.isSearching.set(false);
                 console.error('Error fetching tracking details:', error);
                 this.notFound.set(true);
                 this.trackingData.set(null);
-            } finally {
-                this.isSearching.set(false);
             }
-        }, 800);
+        });
     }
 
     resetSearch(): void {

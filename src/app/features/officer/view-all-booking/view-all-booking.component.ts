@@ -64,30 +64,31 @@ export class ViewAllBookingsOfficerComponent implements OnInit {
     constructor(
         private router: Router,
         private bookingService: BookingService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
-        const response = this.bookingService.getAllBookings();
-        if (response.success && response.data) {
-            this.allBookings = response.data.map((booking, index) => ({
-                customerId: booking.customerId,
-                customerName: `Customer ${index + 1}`, 
-                bookingId: booking.bookingId,
-                bookingDate: booking.bookingDate,
-                receiverName: booking.receiverName,
-                deliveredAddress: booking.deliveredAddress,
-                amount: booking.amount,
-                status: booking.status,
-                feedback:
-                    Math.random() > 0.6
-                        ? {
-                              rating: Math.floor(Math.random() * 5) + 1,
-                              comment: 'Good service',
-                          }
-                        : undefined,
-            }));
-        }
-        this.applyFilters();
+        this.bookingService.getAllBookings().subscribe((response) => {
+            if (response.success && response.data) {
+                this.allBookings = response.data.map((booking: any, index: number) => ({
+                    customerId: booking.customerId || '',
+                    customerName: `Customer ${index + 1}`,
+                    bookingId: booking.trakingId || booking.bookingId, // Handle both potential field names
+                    bookingDate: booking.bookingDate,
+                    receiverName: booking.receiverName,
+                    deliveredAddress: booking.deliveryAddress || booking.deliveredAddress, // Handle field rename
+                    amount: booking.amount,
+                    status: booking.bookingStatus || booking.status,
+                    feedback:
+                        Math.random() > 0.6
+                            ? {
+                                rating: Math.floor(Math.random() * 5) + 1,
+                                comment: 'Good service',
+                            }
+                            : undefined,
+                }));
+                this.applyFilters();
+            }
+        });
     }
 
     applyFilters() {
