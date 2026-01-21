@@ -16,42 +16,25 @@
                 <p class="form-subtitle">Fill in your details to get started</p>
 
                 @if (errorMessage()) {
-                <div class="alert-base alert-error error-alert" role="alert">
-                    <div class="alert-icon">
-                        <svg fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
-                    </div>
-                    <div class="alert-content">
-                        <div class="alert-description">
-                            {{ errorMessage() }}
+                    <div
+                        class="alert-base alert-error error-alert"
+                        role="alert"
+                    >
+                        <div class="alert-icon">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-description">
+                                {{ errorMessage() }}
+                            </div>
                         </div>
                     </div>
-                </div>
-                } @if (successMessage()) {
-                <div
-                    class="alert-base alert-success success-alert"
-                    role="alert"
-                >
-                    <div class="alert-icon">
-                        <svg fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                fill-rule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
-                    </div>
-                    <div class="alert-content">
-                        <div class="alert-description">
-                            {{ successMessage() }}
-                        </div>
-                    </div>
-                </div>
                 }
 
                 <div class="form-section">
@@ -71,10 +54,10 @@
                                     formControlName="name"
                                 />
                             </div>
-                            @if (getFieldError('name')) {
-                            <span class="input-error">{{
-                                getFieldError("name")
-                            }}</span>
+                            @if (getFieldError("name")) {
+                                <span class="input-error">{{
+                                    getFieldError("name")
+                                }}</span>
                             }
                         </div>
                     </div>
@@ -93,10 +76,10 @@
                                     formControlName="email"
                                 />
                             </div>
-                            @if (getFieldError('email')) {
-                            <span class="input-error">{{
-                                getFieldError("email")
-                            }}</span>
+                            @if (getFieldError("email")) {
+                                <span class="input-error">{{
+                                    getFieldError("email")
+                                }}</span>
                             }
                         </div>
                     </div>
@@ -116,10 +99,10 @@
                                         formControlName="password"
                                     />
                                 </div>
-                                @if (getFieldError('password')) {
-                                <span class="input-error">{{
-                                    getFieldError("password")
-                                }}</span>
+                                @if (getFieldError("password")) {
+                                    <span class="input-error">{{
+                                        getFieldError("password")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -138,10 +121,10 @@
                                         formControlName="confirmPassword"
                                     />
                                 </div>
-                                @if (getFieldError('confirmPassword')) {
-                                <span class="input-error">{{
-                                    getFieldError("confirmPassword")
-                                }}</span>
+                                @if (getFieldError("confirmPassword")) {
+                                    <span class="input-error">{{
+                                        getFieldError("confirmPassword")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -161,14 +144,16 @@
                                         class="input-base"
                                         formControlName="mobileCountryCode"
                                     >
-                                        @for (country of countryCodes; track
-                                        country.code) {
-                                        <option [value]="country.code">
-                                            {{ country.flag }}
-                                            {{ country.code }} ({{
-                                                country.name
-                                            }})
-                                        </option>
+                                        @for (
+                                            country of countryCodes;
+                                            track country.code
+                                        ) {
+                                            <option [value]="country.code">
+                                                {{ country.flag }}
+                                                {{ country.code }} ({{
+                                                    country.name
+                                                }})
+                                            </option>
                                         }
                                     </select>
                                 </div>
@@ -190,10 +175,10 @@
                                         maxlength="10"
                                     />
                                 </div>
-                                @if (getFieldError('mobileNumber')) {
-                                <span class="input-error">{{
-                                    getFieldError("mobileNumber")
-                                }}</span>
+                                @if (getFieldError("mobileNumber")) {
+                                    <span class="input-error">{{
+                                        getFieldError("mobileNumber")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -213,14 +198,16 @@
                                         class="input-base"
                                         formControlName="alternateMobileCountryCode"
                                     >
-                                        @for (country of countryCodes; track
-                                        country.code) {
-                                        <option [value]="country.code">
-                                            {{ country.flag }}
-                                            {{ country.code }} ({{
-                                                country.name
-                                            }})
-                                        </option>
+                                        @for (
+                                            country of countryCodes;
+                                            track country.code
+                                        ) {
+                                            <option [value]="country.code">
+                                                {{ country.flag }}
+                                                {{ country.code }} ({{
+                                                    country.name
+                                                }})
+                                            </option>
                                         }
                                     </select>
                                 </div>
@@ -244,10 +231,10 @@
                                         maxlength="10"
                                     />
                                 </div>
-                                @if (getFieldError('alternateMobileNumber')) {
-                                <span class="input-error">{{
-                                    getFieldError("alternateMobileNumber")
-                                }}</span>
+                                @if (getFieldError("alternateMobileNumber")) {
+                                    <span class="input-error">{{
+                                        getFieldError("alternateMobileNumber")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -274,10 +261,10 @@
                                         formControlName="houseNo"
                                     />
                                 </div>
-                                @if (getFieldError('houseNo')) {
-                                <span class="input-error">{{
-                                    getFieldError("houseNo")
-                                }}</span>
+                                @if (getFieldError("houseNo")) {
+                                    <span class="input-error">{{
+                                        getFieldError("houseNo")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -296,10 +283,10 @@
                                         formControlName="addressLine1"
                                     />
                                 </div>
-                                @if (getFieldError('addressLine1')) {
-                                <span class="input-error">{{
-                                    getFieldError("addressLine1")
-                                }}</span>
+                                @if (getFieldError("addressLine1")) {
+                                    <span class="input-error">{{
+                                        getFieldError("addressLine1")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -320,10 +307,10 @@
                                         formControlName="addressLine2"
                                     />
                                 </div>
-                                @if (getFieldError('addressLine2')) {
-                                <span class="input-error">{{
-                                    getFieldError("addressLine2")
-                                }}</span>
+                                @if (getFieldError("addressLine2")) {
+                                    <span class="input-error">{{
+                                        getFieldError("addressLine2")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -342,10 +329,10 @@
                                         formControlName="landmark"
                                     />
                                 </div>
-                                @if (getFieldError('landmark')) {
-                                <span class="input-error">{{
-                                    getFieldError("landmark")
-                                }}</span>
+                                @if (getFieldError("landmark")) {
+                                    <span class="input-error">{{
+                                        getFieldError("landmark")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -366,10 +353,10 @@
                                         formControlName="city"
                                     />
                                 </div>
-                                @if (getFieldError('city')) {
-                                <span class="input-error">{{
-                                    getFieldError("city")
-                                }}</span>
+                                @if (getFieldError("city")) {
+                                    <span class="input-error">{{
+                                        getFieldError("city")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -388,10 +375,10 @@
                                         formControlName="state"
                                     />
                                 </div>
-                                @if (getFieldError('state')) {
-                                <span class="input-error">{{
-                                    getFieldError("state")
-                                }}</span>
+                                @if (getFieldError("state")) {
+                                    <span class="input-error">{{
+                                        getFieldError("state")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -413,10 +400,10 @@
                                         maxlength="6"
                                     />
                                 </div>
-                                @if (getFieldError('pinCode')) {
-                                <span class="input-error">{{
-                                    getFieldError("pinCode")
-                                }}</span>
+                                @if (getFieldError("pinCode")) {
+                                    <span class="input-error">{{
+                                        getFieldError("pinCode")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -432,18 +419,20 @@
                                         class="input-base"
                                         formControlName="country"
                                     >
-                                        @for (country of countries; track
-                                        country) {
-                                        <option [value]="country">
-                                            {{ country }}
-                                        </option>
+                                        @for (
+                                            country of countries;
+                                            track country
+                                        ) {
+                                            <option [value]="country">
+                                                {{ country }}
+                                            </option>
                                         }
                                     </select>
                                 </div>
-                                @if (getFieldError('country')) {
-                                <span class="input-error">{{
-                                    getFieldError("country")
-                                }}</span>
+                                @if (getFieldError("country")) {
+                                    <span class="input-error">{{
+                                        getFieldError("country")
+                                    }}</span>
                                 }
                             </div>
                         </div>
@@ -464,6 +453,28 @@
                     </label>
                 </div>
 
+                @if (successMessage()) {
+                    <div
+                        class="alert-base alert-success success-alert"
+                        role="alert"
+                    >
+                        <div class="alert-icon">
+                            <svg fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-description">
+                                {{ successMessage() }}
+                            </div>
+                        </div>
+                    </div>
+                }
+
                 <button
                     type="submit"
                     class="btn-base btn-primary btn-lg btn-full submit-button"
@@ -471,20 +482,20 @@
                     [disabled]="signupForm.invalid || signupForm.pristine"
                 >
                     @if (isLoading()) {
-                    <svg class="btn-spinner" viewBox="0 0 24 24">
-                        <circle
-                            class="spinner-circle"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"
-                            fill="none"
-                        />
-                    </svg>
-                    <span class="btn-text">Creating Account...</span>
+                        <svg class="btn-spinner" viewBox="0 0 24 24">
+                            <circle
+                                class="spinner-circle"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                                fill="none"
+                            />
+                        </svg>
+                        <span class="btn-text">Creating Account...</span>
                     } @else {
-                    <span class="btn-text">Create Account</span>
+                        <span class="btn-text">Create Account</span>
                     }
                 </button>
 

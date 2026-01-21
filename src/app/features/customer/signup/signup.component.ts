@@ -144,8 +144,8 @@ export class SignupComponent {
                         );
                         setTimeout(() => {
                             this.router.navigate(['/login']);
-                        }, 1000);
-                        this.isLoading.set(false);
+                            this.isLoading.set(false);
+                        }, 3000);
                     },
                     error: (error) => {
                         this.errorMessage.set(
