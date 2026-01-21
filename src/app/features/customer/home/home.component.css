@@ -1,0 +1,135 @@
+.host {
+    padding: 16px;
+    font-family: Arial, sans-serif;
+    background-color: #f3fdf7;
+}
+
+/* Cards */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #cce3d6;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+/* Welcome */
+.welcome-card {
+    text-align: center;
+    background-color: #e8f7ef;
+    border-color: #b7e4c7;
+}
+
+.avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #2f855a;
+    color: #ffffff;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.title {
+    color: #14532d;
+    margin-bottom: 8px;
+}
+
+.text {
+    font-size: 14px;
+    color: #166534;
+    margin-bottom: 8px;
+}
+
+.hint {
+    font-size: 13px;
+    color: #4d7c6f;
+}
+
+.active-shipment {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Layout */
+.home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Section titles */
+.section-title {
+    font-size: 18px;
+    color: #064e3b;
+    margin-bottom: 12px;
+}
+
+/* Buttons */
+.action-btn {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: 1px solid #2f855a;
+    background-color: #ecfdf5;
+    color: #14532d;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Analytics */
+.analytics {
+    padding-top: 8px;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.stat-card {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 12px;
+    align-items: center;
+    display: flex;
+    justify-items: center;
+    flex-direction: column;
+    border-radius: 4px;
+}
+
+.label {
+    font-size: 13px;
+    color: #15803d;
+}
+
+.value {
+    font-size: 20px;
+    color: #14532d;
+    margin: 4px 0;
+}
+
+.badge {
+    font-size: 12px;
+    color: #065f46;
+    background-color: #d1fae5;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .home-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+}

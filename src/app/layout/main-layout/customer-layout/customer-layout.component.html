@@ -1,0 +1,13 @@
+<div class="layout">
+    <app-navbar
+        class="navbar"
+        [navItems]="navItems()"
+        [profileRoute]="'/customer/my-profile'"
+    />
+
+    <main class="main-content">
+        <ng-content></ng-content>
+    </main>
+
+    <app-footer [sections]="footerSections()" [companyName]="'Ship In'" />
+</div>

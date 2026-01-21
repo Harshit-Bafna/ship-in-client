@@ -1,0 +1,128 @@
+<app-customer-layout>
+    <div class="profile-container">
+        <div class="profile-grid">
+            <div class="profile-card">
+                <h2 class="profile-title">Basic Information</h2>
+
+                <div class="profile-details">
+                    <div class="detail-row">
+                        <label class="detail-label">User ID:</label>
+                        <span class="detail-value">{{
+                            user?.id ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">User Code:</label>
+                        <span class="detail-value">{{
+                            user?.userCode ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Name:</label>
+                        <span class="detail-value">{{
+                            user?.name ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Email:</label>
+                        <span class="detail-value">{{
+                            user?.email ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Mobile:</label>
+                        <span class="detail-value">
+                            {{ user?.mobileCountryCode ?? "" }}
+                            {{ user?.mobileNumber ?? "N/A" }}
+                        </span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Alternate Mobile:</label>
+                        <span class="detail-value">
+                            {{ user?.alternateMobileCountryCode ?? "" }}
+                            {{ user?.alternateMobileNumber ?? "N/A" }}
+                        </span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Notifications:</label>
+                        <span class="detail-value">
+                            {{
+                                user?.allowNotifications
+                                    ? "Enabled"
+                                    : "Disabled"
+                            }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <h2 class="profile-title">Address Details</h2>
+
+                <div class="profile-details">
+                    <div class="detail-row">
+                        <label class="detail-label">House No:</label>
+                        <span class="detail-value">{{
+                            user?.houseNo ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Address Line 1:</label>
+                        <span class="detail-value">{{
+                            user?.addressLine1 ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Address Line 2:</label>
+                        <span class="detail-value">{{
+                            user?.addressLine2 ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Landmark:</label>
+                        <span class="detail-value">{{
+                            user?.landmark ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">City:</label>
+                        <span class="detail-value">{{
+                            user?.city ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">State:</label>
+                        <span class="detail-value">{{
+                            user?.state ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Pin Code:</label>
+                        <span class="detail-value">{{
+                            user?.pinCode ?? "N/A"
+                        }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <label class="detail-label">Country:</label>
+                        <span class="detail-value">{{
+                            user?.country ?? "N/A"
+                        }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-customer-layout>

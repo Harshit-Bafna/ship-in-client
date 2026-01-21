@@ -1,0 +1,36 @@
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section footer-about">
+                <div class="footer-brand">
+                    <img class="brand-icon" src="logo.svg" />
+                    <span class="brand-name">Ship In</span>
+                </div>
+                <p class="footer-description">
+                    Parcel & Booking Management System - Your trusted partner
+                    for simple, fast and reliable shipping services. We handle
+                    your parcels with care and deliver them on time, every time.
+                </p>
+            </div>
+
+            @for (section of sections(); track section.title) {
+            <div class="footer-section footer-links-section">
+                <h3 class="footer-title">{{ section.title }}</h3>
+                <div class="footer-links">
+                    @for (link of section.links; track link.route) {
+                    <a class="footer-link" [routerLink]="link.route">
+                        {{ link.label }}
+                    </a>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copyright">
+                © {{ currentYear() }} {{ companyName() }}. All rights reserved.
+            </p>
+        </div>
+    </div>
+</footer>

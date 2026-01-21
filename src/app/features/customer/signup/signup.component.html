@@ -1,0 +1,503 @@
+<div class="signup-container">
+    <div class="card-base card-elevated card-padding-none signup-card">
+        <div class="card-header logo-section">
+            <div class="logo-container">
+                <img class="logo-icon" src="logo.svg" />
+                <h1 class="brand-name">Ship In</h1>
+            </div>
+            <p class="brand-description">
+                Track, manage, and deliver with confidence
+            </p>
+        </div>
+
+        <div class="card-content signup-form">
+            <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+                <h2 class="form-title">Create Account</h2>
+                <p class="form-subtitle">Fill in your details to get started</p>
+
+                @if (errorMessage()) {
+                <div class="alert-base alert-error error-alert" role="alert">
+                    <div class="alert-icon">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-description">
+                            {{ errorMessage() }}
+                        </div>
+                    </div>
+                </div>
+                } @if (successMessage()) {
+                <div
+                    class="alert-base alert-success success-alert"
+                    role="alert"
+                >
+                    <div class="alert-icon">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-description">
+                            {{ successMessage() }}
+                        </div>
+                    </div>
+                </div>
+                }
+
+                <div class="form-section">
+                    <h3 class="section-title">Personal Information</h3>
+
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <label for="name" class="input-label"
+                                >Full Name *</label
+                            >
+                            <div class="input-container">
+                                <input
+                                    id="name"
+                                    type="text"
+                                    placeholder="Enter your full name"
+                                    class="input-base"
+                                    formControlName="name"
+                                />
+                            </div>
+                            @if (getFieldError('name')) {
+                            <span class="input-error">{{
+                                getFieldError("name")
+                            }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-wrapper">
+                            <label for="email" class="input-label"
+                                >Email Address *</label
+                            >
+                            <div class="input-container">
+                                <input
+                                    id="email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    class="input-base"
+                                    formControlName="email"
+                                />
+                            </div>
+                            @if (getFieldError('email')) {
+                            <span class="input-error">{{
+                                getFieldError("email")
+                            }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="password" class="input-label"
+                                    >Password *</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        placeholder="Create password"
+                                        class="input-base"
+                                        formControlName="password"
+                                    />
+                                </div>
+                                @if (getFieldError('password')) {
+                                <span class="input-error">{{
+                                    getFieldError("password")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="confirmPassword" class="input-label"
+                                    >Confirm Password *</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="confirmPassword"
+                                        type="password"
+                                        placeholder="Re-enter password"
+                                        class="input-base"
+                                        formControlName="confirmPassword"
+                                    />
+                                </div>
+                                @if (getFieldError('confirmPassword')) {
+                                <span class="input-error">{{
+                                    getFieldError("confirmPassword")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group country-code-group">
+                            <div class="input-wrapper">
+                                <label
+                                    for="mobileCountryCode"
+                                    class="input-label"
+                                    >Country Code *</label
+                                >
+                                <div class="input-container">
+                                    <select
+                                        id="mobileCountryCode"
+                                        class="input-base"
+                                        formControlName="mobileCountryCode"
+                                    >
+                                        @for (country of countryCodes; track
+                                        country.code) {
+                                        <option [value]="country.code">
+                                            {{ country.flag }}
+                                            {{ country.code }} ({{
+                                                country.name
+                                            }})
+                                        </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mobile-number-group">
+                            <div class="input-wrapper">
+                                <label for="mobileNumber" class="input-label"
+                                    >Mobile Number *</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="mobileNumber"
+                                        type="text"
+                                        placeholder="Enter 10-digit mobile number"
+                                        class="input-base"
+                                        formControlName="mobileNumber"
+                                        maxlength="10"
+                                    />
+                                </div>
+                                @if (getFieldError('mobileNumber')) {
+                                <span class="input-error">{{
+                                    getFieldError("mobileNumber")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group country-code-group">
+                            <div class="input-wrapper">
+                                <label
+                                    for="alternateMobileCountryCode"
+                                    class="input-label"
+                                    >Country Code</label
+                                >
+                                <div class="input-container">
+                                    <select
+                                        id="alternateMobileCountryCode"
+                                        class="input-base"
+                                        formControlName="alternateMobileCountryCode"
+                                    >
+                                        @for (country of countryCodes; track
+                                        country.code) {
+                                        <option [value]="country.code">
+                                            {{ country.flag }}
+                                            {{ country.code }} ({{
+                                                country.name
+                                            }})
+                                        </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mobile-number-group">
+                            <div class="input-wrapper">
+                                <label
+                                    for="alternateMobileNumber"
+                                    class="input-label"
+                                    >Alternate Mobile Number (Optional)</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="alternateMobileNumber"
+                                        type="text"
+                                        placeholder="Enter 10-digit mobile number"
+                                        class="input-base"
+                                        formControlName="alternateMobileNumber"
+                                        maxlength="10"
+                                    />
+                                </div>
+                                @if (getFieldError('alternateMobileNumber')) {
+                                <span class="input-error">{{
+                                    getFieldError("alternateMobileNumber")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="form-section">
+                    <h3 class="section-title">Address Details</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="houseNo" class="input-label"
+                                    >House/Flat No *</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="houseNo"
+                                        type="text"
+                                        placeholder="House or flat number"
+                                        class="input-base"
+                                        formControlName="houseNo"
+                                    />
+                                </div>
+                                @if (getFieldError('houseNo')) {
+                                <span class="input-error">{{
+                                    getFieldError("houseNo")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="addressLine1" class="input-label"
+                                    >Address Line 1 *</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="addressLine1"
+                                        type="text"
+                                        placeholder="Street, area"
+                                        class="input-base"
+                                        formControlName="addressLine1"
+                                    />
+                                </div>
+                                @if (getFieldError('addressLine1')) {
+                                <span class="input-error">{{
+                                    getFieldError("addressLine1")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="addressLine2" class="input-label"
+                                    >Address Line 2 (Optional)</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="addressLine2"
+                                        type="text"
+                                        placeholder="Additional address info"
+                                        class="input-base"
+                                        formControlName="addressLine2"
+                                    />
+                                </div>
+                                @if (getFieldError('addressLine2')) {
+                                <span class="input-error">{{
+                                    getFieldError("addressLine2")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="landmark" class="input-label"
+                                    >Landmark (Optional)</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="landmark"
+                                        type="text"
+                                        placeholder="Nearby landmark"
+                                        class="input-base"
+                                        formControlName="landmark"
+                                    />
+                                </div>
+                                @if (getFieldError('landmark')) {
+                                <span class="input-error">{{
+                                    getFieldError("landmark")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="city" class="input-label"
+                                    >City *</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="city"
+                                        type="text"
+                                        placeholder="Enter city"
+                                        class="input-base"
+                                        formControlName="city"
+                                    />
+                                </div>
+                                @if (getFieldError('city')) {
+                                <span class="input-error">{{
+                                    getFieldError("city")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="state" class="input-label"
+                                    >State *</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="state"
+                                        type="text"
+                                        placeholder="Enter state"
+                                        class="input-base"
+                                        formControlName="state"
+                                    />
+                                </div>
+                                @if (getFieldError('state')) {
+                                <span class="input-error">{{
+                                    getFieldError("state")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="pinCode" class="input-label"
+                                    >PIN Code *</label
+                                >
+                                <div class="input-container">
+                                    <input
+                                        id="pinCode"
+                                        type="text"
+                                        placeholder="6-digit PIN code"
+                                        class="input-base"
+                                        formControlName="pinCode"
+                                        maxlength="6"
+                                    />
+                                </div>
+                                @if (getFieldError('pinCode')) {
+                                <span class="input-error">{{
+                                    getFieldError("pinCode")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label for="country" class="input-label"
+                                    >Country *</label
+                                >
+                                <div class="input-container">
+                                    <select
+                                        id="country"
+                                        class="input-base"
+                                        formControlName="country"
+                                    >
+                                        @for (country of countries; track
+                                        country) {
+                                        <option [value]="country">
+                                            {{ country }}
+                                        </option>
+                                        }
+                                    </select>
+                                </div>
+                                @if (getFieldError('country')) {
+                                <span class="input-error">{{
+                                    getFieldError("country")
+                                }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-wrapper">
+                        <input
+                            type="checkbox"
+                            class="checkbox-input"
+                            formControlName="allowNotifications"
+                        />
+                        <span class="checkbox-label">
+                            Allow delivery notifications via notification
+                            services
+                        </span>
+                    </label>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn-base btn-primary btn-lg btn-full submit-button"
+                    [disabled]="isLoading()"
+                    [disabled]="signupForm.invalid || signupForm.pristine"
+                >
+                    @if (isLoading()) {
+                    <svg class="btn-spinner" viewBox="0 0 24 24">
+                        <circle
+                            class="spinner-circle"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                            fill="none"
+                        />
+                    </svg>
+                    <span class="btn-text">Creating Account...</span>
+                    } @else {
+                    <span class="btn-text">Create Account</span>
+                    }
+                </button>
+
+                <div class="signin-section">
+                    <span class="signin-text">Already have an account?</span>
+                    <a
+                        routerLink="/login"
+                        class="link-base link-primary link-md link-underline-hover signin-link"
+                    >
+                        <span class="link-text">Sign In</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

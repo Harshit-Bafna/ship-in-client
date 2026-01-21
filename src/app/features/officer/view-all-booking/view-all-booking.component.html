@@ -1,0 +1,171 @@
+<app-officer-layout>
+    <div class="container">
+        <h2>View All Bookings</h2>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Customer ID:</label>
+                <input type="text" [(ngModel)]="filterCustomerId" (input)="onFilterChange()"
+                    placeholder="Search Customer ID" />
+            </div>
+
+            <div class="filter-group">
+                <label>Booking ID:</label>
+                <input type="text" [(ngModel)]="filterBookingId" (input)="onFilterChange()"
+                    placeholder="Search Booking ID" />
+            </div>
+
+            <div class="filter-group">
+                <label>Date:</label>
+                <input type="date" [(ngModel)]="filterDate" (change)="onFilterChange()" />
+            </div>
+
+            <div class="filter-group">
+                <label>Status:</label>
+                <select [(ngModel)]="filterStatus" (change)="onFilterChange()">
+                    <option value="">All Statuses</option>
+                    <option *ngFor="let status of allStatuses" [value]="status">
+                        {{ status }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        @if (showDownloadOptions) {
+        <div class="download-actions">
+            <button (click)="downloadExcel()" class="btn-download excel">
+                Download Excel
+            </button>
+            <button (click)="downloadPDF()" class="btn-download pdf">
+                Download PDF
+            </button>
+        </div>
+        }
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>Customer Name</th>
+                        <th>Booking ID</th>
+                        <th>Booking Date</th>
+                        <th>Receiver Name</th>
+                        <th>Delivered Address</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (booking of displayedBookings; track booking.bookingId)
+                    {
+                    <tr>
+                        <td>{{ booking.customerId }}</td>
+                        <td>{{ booking.customerName }}</td>
+                        <td>{{ booking.bookingId }}</td>
+                        <td>{{ booking.bookingDate | date:'yyyy-MM-dd' }}</td>
+                        <td>{{ booking.receiverName }}</td>
+                        <td>{{ booking.deliveredAddress }}</td>
+                        <td>Rs. {{ booking.amount }}</td>
+                        <td>
+                            <select class="status-select" [(ngModel)]="booking.status"
+                                (change)="onStatusChange(booking)">
+                                <option [value]="booking.status">
+                                    {{ booking.status }}
+                                </option>
+                                @for (status of
+                                getUpcomingStatuses(booking.status); track
+                                status) {
+                                <option [value]="status">
+                                    {{ status }}
+                                </option>
+                                }
+                            </select>
+                        </td>
+                        <td class="actions-cell">
+                            @if (booking.feedback) {
+                            <button (click)="viewFeedback(booking)" class="btn-feedback">
+                                View Feedback
+                            </button>
+                            } @else {
+                            <span class="no-feedback">No Feedback</span>
+                            }
+
+                            <button type="button" class="menu-trigger" aria-label="More options"
+                                (click)="toggleMenu($event, booking.bookingId)">
+                                ⋮
+                            </button>
+
+                            @if (openMenuId === booking.bookingId) {
+                            <div class="menu-panel">
+                                <button type="button" class="menu-item" (click)="onViewBookingDetails(booking)">
+                                    View Booking Details
+                                </button>
+                            </div>
+                            }
+                        </td>
+                    </tr>
+                    } @if (displayedBookings.length === 0) {
+                    <tr>
+                        <td colspan="9" class="no-data">
+                            No bookings found matching criteria.
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">
+                Previous
+            </button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+                Next
+            </button>
+        </div>
+
+        @if (isFeedbackModalOpen && selectedBooking) {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Customer Feedback</h3>
+
+                <div class="feedback-details">
+                    <p>
+                        <strong>Booking ID:</strong>
+                        {{ selectedBooking.bookingId }}
+                    </p>
+                    <p>
+                        <strong>Customer:</strong>
+                        {{ selectedBooking.customerName }}
+                    </p>
+                    <p><strong>Rating:</strong></p>
+                    <div class="star-display">
+                        @for (star of [1, 2, 3, 4, 5]; track star) {
+                        <span>{{
+                            star <= selectedBooking.feedback!.rating ? "★" : "☆" }}</span>
+                                }
+                    </div>
+                    <p><strong>Comment:</strong></p>
+                    <p>
+                        {{
+                        selectedBooking.feedback!.comment ||
+                        "No comment provided"
+                        }}
+                    </p>
+                </div>
+
+                <div class="modal-actions">
+                    <button (click)="closeFeedbackModal()" class="btn-close">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+        } @if (openMenuId) {
+        <div class="menu-backdrop" (click)="closeMenu()"></div>
+        }
+    </div>
+</app-officer-layout>

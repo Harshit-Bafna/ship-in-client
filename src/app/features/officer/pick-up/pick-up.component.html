@@ -1,0 +1,80 @@
+<app-officer-layout>
+    <div class="container">
+        <h2>Pick Up Schedule</h2>
+
+        <!-- Search -->
+        <div class="filters" style="align-items: center">
+            <div class="filter-group" style="min-width: 260px">
+                <label for="searchBookingId">Enter Booking ID</label>
+                <input id="searchBookingId" type="text" placeholder="e.g., BK-1001" [(ngModel)]="searchBookingId" />
+            </div>
+
+            <button class="btn-download excel" (click)="search()">
+                Search
+            </button>
+        </div>
+
+        <p class="error-message" *ngIf="message">{{ message }}</p>
+
+        <!-- Booking Details -->
+        <div class="booking-details" *ngIf="booking">
+            <h3>Booking Details</h3>
+
+            <p><b>Booking Id:</b> {{ booking.bookingId }}</p>
+            <p><b>Full Name:</b> {{ booking.fullName }}</p>
+            <p><b>Address:</b> {{ booking.address }}</p>
+            <p><b>Rec Name:</b> {{ booking.receiverName }}</p>
+            <p><b>Rec Address:</b> {{ booking.receiverAddress }}</p>
+            <p><b>Date of Booking:</b> {{ booking.bookingDate }}</p>
+
+            <p>
+                <b>Status:</b>
+                <span class="status-badge" [ngClass]="{
+                        pending: booking.status.toLowerCase() === 'pending',
+                        'in-transit':
+                            booking.status.toLowerCase() === 'in transit',
+                        delivered:
+                            booking.status.toLowerCase() === 'delivered',
+                        cancelled: booking.status.toLowerCase() === 'cancelled'
+                    }">
+                    {{ booking.status }}
+                </span>
+            </p>
+
+            <p><b>Pickup Time:</b> {{ booking.pickupTime || "-" }}</p>
+            <p><b>Drop-off Time:</b> {{ booking.dropoffTime || "-" }}</p>
+
+            <hr />
+
+            <!-- Update Section -->
+            <h4>Update Pickup & Drop-off</h4>
+
+            <div class="form-group">
+                <label for="pickup">Pickup</label>
+                <input id="pickup" type="datetime-local" [(ngModel)]="pickupTime" />
+            </div>
+
+            <div class="form-group">
+                <label for="dropoff">Drop-off</label>
+                <input id="dropoff" type="datetime-local" [(ngModel)]="dropoffTime" />
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-submit" (click)="save()">Save</button>
+            </div>
+
+            <!-- optional feedback UI messages -->
+            <p class="success-message"
+                *ngIf="message && (message.includes('successfully') || message.includes('success'))">
+                {{ message }}
+            </p>
+            <p class="error-message" *ngIf="
+                    message &&
+                    !message.includes('successfully') &&
+                    !message.includes('success')
+                ">
+                {{ message }}
+            </p>
+        </div>
+    </div>
+</app-officer-layout>

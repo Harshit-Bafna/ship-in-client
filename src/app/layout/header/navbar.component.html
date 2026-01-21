@@ -1,0 +1,71 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-brand">
+            <img src="logo.svg" class="brand-icon" alt="Logo" />
+            <span class="brand-name">Ship In</span>
+        </div>
+
+        <div class="navbar-menu" [class.navbar-menu-open]="isMobileMenuOpen()">
+            @for (item of navItems(); track item.route) {
+            <a class="nav-link" [routerLink]="item.route">
+                {{ item.label }}
+            </a>
+            }
+        </div>
+
+        <div class="navbar-actions">
+            <div class="user-menu" (click)="toggleUserMenu()">
+                <div class="user-avatar">
+                    {{ getUserInitials() }}
+                </div>
+                <svg
+                    class="dropdown-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                    />
+                </svg>
+            </div>
+
+            <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @if (!isMobileMenuOpen()) {
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"
+                    />
+                    } @else {
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                    }
+                </svg>
+            </button>
+
+            @if (isUserMenuOpen()) {
+            <div class="user-dropdown">
+                @if(isProfile()){<button
+                    class="dropdown-item"
+                    (click)="handleMyProfile()"
+                >
+                    My Profile</button
+                >}
+                <button class="dropdown-item logout" (click)="handleLogout()">
+                    Logout
+                </button>
+            </div>
+            }
+        </div>
+    </div>
+</nav>

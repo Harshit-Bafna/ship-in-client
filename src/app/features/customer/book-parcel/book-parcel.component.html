@@ -1,0 +1,391 @@
+<app-customer-layout>
+    @if (!showSuccess()) {
+    <div class="container">
+        <div class="form-card">
+            <h2 class="title">Book New Parcel</h2>
+
+            @if (errorMsg()) {
+            <div class="error">{{ errorMsg() }}</div>
+            }
+
+            <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+                <div class="section">
+                    <h3 class="section-title">Receiver Details</h3>
+
+                    <div class="field">
+                        <label>Full Name *</label>
+                        <input
+                            type="text"
+                            formControlName="name"
+                            placeholder="Enter full name"
+                        />
+                        @if (getError('name')) {
+                        <span class="field-error">{{ getError("name") }}</span>
+                        }
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>House/Flat No *</label>
+                            <input
+                                type="text"
+                                formControlName="houseNo"
+                                placeholder="e.g., 123"
+                            />
+                            @if (getError('houseNo')) {
+                            <span class="field-error">{{
+                                getError("houseNo")
+                            }}</span>
+                            }
+                        </div>
+                        <div class="field">
+                            <label>Pincode *</label>
+                            <input
+                                type="text"
+                                formControlName="pincode"
+                                placeholder="6 digits"
+                                maxlength="6"
+                            />
+                            @if (getError('pincode')) {
+                            <span class="field-error">{{
+                                getError("pincode")
+                            }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Address Line 1 *</label>
+                        <input
+                            type="text"
+                            formControlName="addressLine1"
+                            placeholder="Street address"
+                        />
+                        @if (getError('addressLine1')) {
+                        <span class="field-error">{{
+                            getError("addressLine1")
+                        }}</span>
+                        }
+                    </div>
+
+                    <div class="field">
+                        <label>Address Line 2</label>
+                        <input
+                            type="text"
+                            formControlName="addressLine2"
+                            placeholder="Apartment, suite, etc. (optional)"
+                        />
+                    </div>
+
+                    <div class="field">
+                        <label>Landmark</label>
+                        <input
+                            type="text"
+                            formControlName="landmark"
+                            placeholder="Nearby landmark (optional)"
+                        />
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>City *</label>
+                            <input
+                                type="text"
+                                formControlName="city"
+                                placeholder="City"
+                            />
+                            @if (getError('city')) {
+                            <span class="field-error">{{
+                                getError("city")
+                            }}</span>
+                            }
+                        </div>
+                        <div class="field">
+                            <label>State *</label>
+                            <input
+                                type="text"
+                                formControlName="state"
+                                placeholder="State"
+                            />
+                            @if (getError('state')) {
+                            <span class="field-error">{{
+                                getError("state")
+                            }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Country *</label>
+                        <input
+                            type="text"
+                            formControlName="country"
+                            placeholder="Country"
+                        />
+                        @if (getError('country')) {
+                        <span class="field-error">{{
+                            getError("country")
+                        }}</span>
+                        }
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>Phone Number *</label>
+                            <input
+                                type="text"
+                                formControlName="phoneNumber"
+                                placeholder="10 digits"
+                                maxlength="10"
+                            />
+                            @if (getError('phoneNumber')) {
+                            <span class="field-error">{{
+                                getError("phoneNumber")
+                            }}</span>
+                            }
+                        </div>
+                        <div class="field">
+                            <label>Alternate Phone</label>
+                            <input
+                                type="text"
+                                formControlName="alternatePhoneNumber"
+                                placeholder="10 digits (optional)"
+                                maxlength="10"
+                            />
+                            @if (getError('alternatePhoneNumber')) {
+                            <span class="field-error">{{
+                                getError("alternatePhoneNumber")
+                            }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Email *</label>
+                        <input
+                            type="email"
+                            formControlName="email"
+                            placeholder="email@example.com"
+                        />
+                        @if (getError('email')) {
+                        <span class="field-error">{{ getError("email") }}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3 class="section-title">Parcel Details</h3>
+
+                    <div class="field">
+                        <label>Parcel Weight (in grams) *</label>
+                        <input
+                            type="number"
+                            formControlName="parcelWeightInGram"
+                            placeholder="Enter weight in grams"
+                            min="1"
+                            max="50000"
+                        />
+                        @if (getError('parcelWeightInGram')) {
+                        <span class="field-error">{{
+                            getError("parcelWeightInGram")
+                        }}</span>
+                        }
+                    </div>
+
+                    <div class="field">
+                        <label>Contents Description *</label>
+                        <textarea
+                            formControlName="parcelContentsDescription"
+                            placeholder="Describe parcel contents (min 10 characters)"
+                            rows="3"
+                        ></textarea>
+                        @if (getError('parcelContentsDescription')) {
+                        <span class="field-error">{{
+                            getError("parcelContentsDescription")
+                        }}</span>
+                        }
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>Packaging Type *</label>
+                            <select formControlName="packagingType">
+                                @for (type of packagingTypes; track type) {
+                                <option [value]="type">{{ type }}</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Delivery Type *</label>
+                            <select formControlName="deliveryType">
+                                @for (type of deliveryTypes; track type) {
+                                <option [value]="type">
+                                    {{ formatDeliveryType(type) }}
+                                </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>Pickup Time *</label>
+                            <input
+                                type="datetime-local"
+                                formControlName="parcelPickupTime"
+                                [attr.min]="minDateTime"
+                            />
+                            @if (getError('parcelPickupTime')) {
+                            <span class="field-error">{{
+                                getError("parcelPickupTime")
+                            }}</span>
+                            }
+                        </div>
+                        <div class="field">
+                            <label>Dropoff Time *</label>
+                            <input
+                                type="datetime-local"
+                                formControlName="parcelDropoffTime"
+                                [attr.min]="minDateTime"
+                            />
+                            @if (getError('parcelDropoffTime')) {
+                            <span class="field-error">{{
+                                getError("parcelDropoffTime")
+                            }}</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="processing()"
+                    [disabled]="bookingForm.invalid || bookingForm.pristine"
+                >
+                    {{ processing() ? "Processing..." : "Book Parcel" }}
+                </button>
+            </form>
+        </div>
+
+        <div class="cost-card">
+            <h3 class="cost-title">Cost Breakdown</h3>
+
+            <div class="cost-item">
+                <span>Base Rate</span>
+                <strong>₹{{ baseRate }}</strong>
+            </div>
+            <div class="cost-item">
+                <span
+                    >Weight Charge ({{
+                        bookingForm.value.parcelWeightInGram || 0
+                    }}g &#64; ₹0.02/g)</span
+                >
+                <strong>₹{{ weightCharge() }}</strong>
+            </div>
+            <div class="cost-item">
+                <span
+                    >Delivery Charge ({{
+                        formatDeliveryType(
+                            bookingForm.value.deliveryType || "STANDARD"
+                        )
+                    }})</span
+                >
+                <strong>₹{{ deliveryCharge() }}</strong>
+            </div>
+            <div class="cost-item">
+                <span
+                    >Packing Charge ({{
+                        bookingForm.value.packagingType || "BASIC"
+                    }})</span
+                >
+                <strong>₹{{ packingCharge() }}</strong>
+            </div>
+            <div class="cost-divider"></div>
+            <div class="cost-item">
+                <span>Subtotal</span>
+                <strong
+                    >₹{{
+                        baseRate +
+                            weightCharge() +
+                            deliveryCharge() +
+                            packingCharge()
+                    }}</strong
+                >
+            </div>
+            <div class="cost-item">
+                <span>Tax (5%)</span>
+                <strong
+                    >₹{{
+                        (
+                            (baseRate +
+                                weightCharge() +
+                                deliveryCharge() +
+                                packingCharge()) *
+                            taxRate
+                        ).toFixed(2)
+                    }}</strong
+                >
+            </div>
+            <div class="cost-divider"></div>
+            <div class="cost-total">
+                <span>Total Cost</span>
+                <strong>₹{{ totalCost() }}</strong>
+            </div>
+        </div>
+    </div>
+    } @if (showSuccess()) {
+    <div class="success-card">
+        <div class="success-icon">✓</div>
+        <h2 class="title">Booking Successful!</h2>
+
+        <div class="booking-details">
+            <div class="detail">
+                <span>Booking ID:</span>
+                <strong>{{ bookingId() }}</strong>
+            </div>
+            <div class="detail">
+                <span>Receiver Name:</span>
+                <strong>{{ bookingForm.value.name }}</strong>
+            </div>
+            <div class="detail">
+                <span>Delivery Address:</span>
+                <strong
+                    >{{ bookingForm.value.addressLine1 }},
+                    {{ bookingForm.value.city }}</strong
+                >
+            </div>
+            <div class="detail">
+                <span>Parcel Weight:</span>
+                <strong>{{ bookingForm.value.parcelWeightInGram }}g</strong>
+            </div>
+            <div class="detail">
+                <span>Delivery Type:</span>
+                <strong>{{
+                    formatDeliveryType(bookingForm.value.deliveryType || "")
+                }}</strong>
+            </div>
+            <div class="detail">
+                <span>Total Amount:</span>
+                <strong class="amount">₹{{ totalCost() }}</strong>
+            </div>
+        </div>
+
+        <div class="success-message">
+            <p>
+                Your parcel booking has been confirmed. Would you like to
+                proceed with payment?
+            </p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" (click)="goToDashboard()">
+                Pay Later
+            </button>
+            <button class="btn btn-primary" (click)="goToPayment()">
+                Pay Now
+            </button>
+        </div>
+    </div>
+    }
+</app-customer-layout>

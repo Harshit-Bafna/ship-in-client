@@ -1,0 +1,125 @@
+<app-support-layout>
+    <div class="container">
+        <h2>Support Tickets (Staff View)</h2>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Booking ID</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let ticket of displayedTickets">
+                        <td>{{ ticket.ticketId }}</td>
+                        <td>{{ ticket.bookingId }}</td>
+                        <td>{{ ticket.title }}</td>
+                        <td>
+                            <span
+                                [class.status-open]="
+                                    ticket.status === 'OPEN' || 'Open'
+                                "
+                                [class.status-closed]="
+                                    ticket.status === 'CLOSED'
+                                "
+                            >
+                                {{ ticket.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <button
+                                *ngIf="ticket.status === 'OPEN'"
+                                class="btn-action btn-close-ticket"
+                                (click)="openCloseModal(ticket)"
+                            >
+                                Close
+                            </button>
+                            <button
+                                *ngIf="ticket.status === 'CLOSED'"
+                                class="btn-action btn-view"
+                                (click)="openViewModal(ticket)"
+                            >
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">
+                Previous
+            </button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button
+                (click)="nextPage()"
+                [disabled]="currentPage === totalPages"
+            >
+                Next
+            </button>
+        </div>
+
+        <!-- Close Ticket Modal -->
+        <div class="modal-overlay" *ngIf="activeModal === 'close'">
+            <div class="modal-content">
+                <h3>Close Ticket ({{ selectedTicket?.ticketId }})</h3>
+                <div class="form-group">
+                    <label>Officer Remark:</label>
+                    <textarea
+                        rows="4"
+                        [(ngModel)]="officerRemark"
+                        placeholder="Enter resolution details..."
+                    ></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" (click)="closeModal()">
+                        Cancel
+                    </button>
+                    <button
+                        class="btn-primary"
+                        (click)="confirmClose()"
+                        [disabled]="!officerRemark.trim()"
+                    >
+                        Confirm Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Ticket Modal -->
+        <div class="modal-overlay" *ngIf="activeModal === 'view'">
+            <div class="modal-content">
+                <h3>Ticket Details</h3>
+                <div class="detail-row">
+                    <strong>Ticket ID:</strong> {{ selectedTicket?.ticketId }}
+                </div>
+                <div class="detail-row">
+                    <strong>Booking ID:</strong> {{ selectedTicket?.bookingId }}
+                </div>
+                <div class="detail-row">
+                    <strong>Description:</strong>
+                    <p>{{ selectedTicket?.description }}</p>
+                </div>
+                <hr />
+                <div class="detail-row">
+                    <strong>Closed At:</strong>
+                    {{ selectedTicket?.closedAt | date : "medium" }}
+                </div>
+                <div class="detail-row">
+                    <strong>Officer Remark:</strong>
+                    <p>{{ selectedTicket?.officerRemark }}</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-primary" (click)="closeModal()">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-support-layout>

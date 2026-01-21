@@ -1,0 +1,201 @@
+<app-officer-layout>
+    <div class="search-bar">
+        <input
+            class="search-input"
+            [(ngModel)]="bookingId"
+            placeholder="Enter Tracking ID or Booking ID"
+        />
+        <button
+            class="btn"
+            (click)="searchTracking(bookingId)"
+            [disabled]="isSearching()"
+        >
+            {{ isSearching() ? "Searching..." : "Track" }}
+        </button>
+        <button class="btn secondary" (click)="resetSearch()">Reset</button>
+    </div>
+
+    @if (notFound()) {
+    <div class="error-message">
+        <p>
+            No tracking information found for the provided ID. Please check and
+            try again.
+        </p>
+    </div>
+    } @if (trackingData()) {
+    <div class="header-card">
+        <div class="header-block">
+            <h3>Sender</h3>
+            <p>{{ trackingData()?.senderDetails?.name || "N/A" }}</p>
+            <p>{{ trackingData()?.senderDetails?.phone || "N/A" }}</p>
+            <p>{{ trackingData()?.senderDetails?.email || "N/A" }}</p>
+            <p>
+                {{ trackingData()?.senderDetails?.houseNo || ""
+                }}{{ trackingData()?.senderDetails?.houseNo ? ", " : "" }}
+                {{ trackingData()?.senderDetails?.addressLine1 || ""
+                }}{{ trackingData()?.senderDetails?.addressLine1 ? ", " : "" }}
+                {{ trackingData()?.senderDetails?.addressLine2 || ""
+                }}{{ trackingData()?.senderDetails?.addressLine2 ? ", " : "" }}
+                {{ trackingData()?.senderDetails?.landmark || ""
+                }}{{ trackingData()?.senderDetails?.landmark ? ", " : "" }}
+                {{ trackingData()?.senderDetails?.city || ""
+                }}{{ trackingData()?.senderDetails?.city ? ", " : "" }}
+                {{ trackingData()?.senderDetails?.state || ""
+                }}{{ trackingData()?.senderDetails?.state ? " - " : "" }}
+                {{ trackingData()?.senderDetails?.pincode || ""
+                }}{{ trackingData()?.senderDetails?.pincode ? ", " : "" }}
+                {{ trackingData()?.senderDetails?.country || "" }}
+            </p>
+        </div>
+
+        <div class="header-block">
+            <h3>Parcel</h3>
+            <p>Tracking ID: {{ trackingData()?.trackingId || "N/A" }}</p>
+            <p>Booking ID: {{ trackingData()?.bookingId || "N/A" }}</p>
+            <p>Status: {{ trackingData()?.currentStatus || "N/A" }}</p>
+            <p>
+                Weight:
+                {{ trackingData()?.parcelDetails?.weightInGrams || 0 }} g
+            </p>
+            <p>
+                Packaging:
+                {{ trackingData()?.parcelDetails?.packagingType || "N/A" }}
+            </p>
+            <p>
+                Delivery Type:
+                {{ trackingData()?.parcelDetails?.deliveryType || "N/A" }}
+            </p>
+        </div>
+
+        <div class="header-block">
+            <h3>Receiver</h3>
+            <p>{{ trackingData()?.receiverDetails?.name || "N/A" }}</p>
+            <p>{{ trackingData()?.receiverDetails?.phoneNumber || "N/A" }}</p>
+            @if (trackingData()?.receiverDetails?.alternatePhoneNumber) {
+            <p>{{ trackingData()?.receiverDetails?.alternatePhoneNumber }}</p>
+            }
+            <p>{{ trackingData()?.receiverDetails?.email || "N/A" }}</p>
+            <p>
+                {{ trackingData()?.receiverDetails?.houseNo || ""
+                }}{{ trackingData()?.receiverDetails?.houseNo ? ", " : "" }}
+                {{ trackingData()?.receiverDetails?.addressLine1 || ""
+                }}{{
+                    trackingData()?.receiverDetails?.addressLine1 ? ", " : ""
+                }}
+                {{ trackingData()?.receiverDetails?.addressLine2 || ""
+                }}{{
+                    trackingData()?.receiverDetails?.addressLine2 ? ", " : ""
+                }}
+                {{ trackingData()?.receiverDetails?.landmark || ""
+                }}{{ trackingData()?.receiverDetails?.landmark ? ", " : "" }}
+                {{ trackingData()?.receiverDetails?.city || ""
+                }}{{ trackingData()?.receiverDetails?.city ? ", " : "" }}
+                {{ trackingData()?.receiverDetails?.state || ""
+                }}{{ trackingData()?.receiverDetails?.state ? " - " : "" }}
+                {{ trackingData()?.receiverDetails?.pincode || ""
+                }}{{ trackingData()?.receiverDetails?.pincode ? ", " : "" }}
+                {{ trackingData()?.receiverDetails?.country || "" }}
+            </p>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <div class="card">
+            <h3>Tracking Details</h3>
+            <p>
+                Current Location: {{ trackingData()?.currentLocation || "N/A" }}
+            </p>
+            <p>
+                Estimated Delivery:
+                {{
+                    trackingData()?.estimatedDeliveryDate
+                        ? (trackingData()?.estimatedDeliveryDate | date)
+                        : "N/A"
+                }}
+            </p>
+            <p>Progress: {{ trackingData()?.progressPercentage || 0 }}%</p>
+
+            @if (trackingData()?.statusHistory &&
+            trackingData()!.statusHistory.length > 0) { @for (s of
+            trackingData()!.statusHistory; track $index) {
+            <div class="timeline" [class.done]="s.completed">
+                <span></span>
+                <div>
+                    <strong>{{ s.label || "N/A" }}</strong>
+                    @if (s.timestamp) {
+                    <p>
+                        {{ s.timestamp | date : "yyyy-MM-dd"
+                        }}{{ s.location ? " | " + s.location : "" }}
+                    </p>
+                    } @if (s.description) {
+                    <p>{{ s.description }}</p>
+                    }
+                </div>
+            </div>
+            } } @else {
+            <p>No tracking history available</p>
+            }
+        </div>
+
+        <div class="card">
+            <h3>Payment Details</h3>
+            @if (trackingData()?.paymentDetails) {
+            <p>
+                Transaction:
+                {{ trackingData()?.paymentDetails?.transactionId || "N/A" }}
+            </p>
+            <p>
+                Status:
+                {{ trackingData()?.paymentDetails?.paymentStatus || "N/A" }}
+            </p>
+            <p>
+                Method:
+                {{ trackingData()?.paymentDetails?.paymentMethod || "N/A" }}
+            </p>
+            <p>
+                Base Rate: ₹{{ trackingData()?.paymentDetails?.baseRate || 0 }}
+            </p>
+            <p>
+                Packaging: ₹{{
+                    trackingData()?.paymentDetails?.packagingRate || 0
+                }}
+            </p>
+            <p>
+                Admin Fee: ₹{{ trackingData()?.paymentDetails?.adminFee || 0 }}
+            </p>
+            <p>
+                Weight Charge: ₹{{
+                    trackingData()?.paymentDetails?.weightCharge || 0
+                }}
+            </p>
+            <p>
+                Delivery Charge: ₹{{
+                    trackingData()?.paymentDetails?.deliveryCharge || 0
+                }}
+            </p>
+            <p>Tax: ₹{{ trackingData()?.paymentDetails?.taxAmount || 0 }}</p>
+            <p>
+                <strong
+                    >Total: ₹{{
+                        trackingData()?.paymentDetails?.finalAmount || 0
+                    }}</strong
+                >
+            </p>
+            @if (trackingData()?.paymentDetails?.cardBrand &&
+            trackingData()?.paymentDetails?.cardLastFour) {
+            <p>
+                Card: {{ trackingData()?.paymentDetails?.cardBrand }} •
+                {{ trackingData()?.paymentDetails?.cardLastFour }}
+            </p>
+            } @if (trackingData()?.paymentDetails?.cardHolderName) {
+            <p>
+                Card Holder:
+                {{ trackingData()?.paymentDetails?.cardHolderName }}
+            </p>
+            } } @else {
+            <p>No payment details available</p>
+            }
+        </div>
+    </div>
+    }
+</app-officer-layout>

@@ -1,0 +1,195 @@
+<app-customer-layout>
+    <div class="page-container">
+        <div class="support-container">
+            <!-- Existing Support Card -->
+            <div class="support-card info-card">
+                <h2 class="card-title">Support</h2>
+                <p class="card-description">
+                    <span>Need help with your parcel or account?</span>
+                    <br />
+                    <br />
+                    <span>Reach out to us using the details below.</span>
+                </p>
+                <div class="support-details">
+                    <div class="detail-row">
+                        <span class="label">Email</span>
+                        <a class="value email-link" href="mailto:shipin@gmail.com">
+                            {{ companyEmail }}
+                        </a>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Phone</span>
+                        <span class="value">{{ supportPhone }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Working Hours</span>
+                        <span class="value">{{ workingDays }}
+                            <br />
+                            <span class="value">{{ workingHours }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Register Complaint Card -->
+            <div class="support-card action-card">
+                <h2 class="card-title">Register Complaint</h2>
+                <p class="card-description">
+                    Have an issue with a specific booking? Retrieve your booking details
+                    and let us know what went wrong.
+                </p>
+                <button class="btn-primary" (click)="openModal('register')">Register Complaint</button>
+            </div>
+
+            <!-- Track Complaint Card -->
+            <div class="support-card action-card">
+                <h2 class="card-title">Track Complaint</h2>
+                <p class="card-description">
+                    Already raised a complaint? Enter your Ticket ID to check the status
+                    and details.
+                </p>
+                <button class="btn-primary" (click)="openModal('track')">Track Complaint</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal-backdrop" *ngIf="activeModal === 'register'" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <!-- Success State -->
+            <div class="modal-body success-state" *ngIf="isSuccess">
+                <div class="success-icon">✓</div>
+                <h3>Complaint registered successfully</h3>
+                <div class="ticket-display">
+                    <p class="ticket-label">Your Ticket ID:</p>
+                    <p class="ticket-value">{{ generatedTicketId }}</p>
+                </div>
+                <button class="btn-primary" (click)="closeModal()">Back to Support Page</button>
+            </div>
+
+            <!-- Form State -->
+            <ng-container *ngIf="!isSuccess">
+                <div class="modal-header">
+                    <h3>Complaint Registration</h3>
+                    <button class="close-btn" (click)="closeModal()">×</button>
+                </div>
+
+                <div class="modal-body">
+                    <form [formGroup]="complaintForm" (ngSubmit)="onRegister()">
+                        <div class="form-group">
+                            <label for="bookingId">Booking ID</label>
+                            <input type="text" id="bookingId" formControlName="bookingId"
+                                placeholder="e.g. BOOK-2026-0001"
+                                [class.invalid]="complaintForm.get('bookingId')?.invalid && complaintForm.get('bookingId')?.touched" />
+                            <small class="error-text"
+                                *ngIf="complaintForm.get('bookingId')?.invalid && complaintForm.get('bookingId')?.touched">
+                                Booking ID is required
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" id="title" formControlName="title" placeholder="Brief title of the issue"
+                                [class.invalid]="complaintForm.get('title')?.invalid && complaintForm.get('title')?.touched" />
+                            <div *ngIf="complaintForm.get('title')?.touched">
+                                <small class="error-text" *ngIf="complaintForm.get('title')?.errors?.['required']">
+                                    Title is required
+                                </small>
+                                <small class="error-text" *ngIf="complaintForm.get('title')?.errors?.['minlength']">
+                                    Title must be at least 5 characters; currently
+                                    {{complaintForm.get('title')?.errors?.['minlength']?.actualLength}}
+                                </small>
+                                <small class="error-text" *ngIf="complaintForm.get('title')?.errors?.['maxlength']">
+                                    Title must be at most 100 characters
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" formControlName="description" rows="4"
+                                placeholder="Describe your issue in detail..."
+                                [class.invalid]="complaintForm.get('description')?.invalid && complaintForm.get('description')?.touched"></textarea>
+                            <div *ngIf="complaintForm.get('description')?.touched">
+                                <small class="error-text"
+                                    *ngIf="complaintForm.get('description')?.errors?.['required']">
+                                    Description is required
+                                </small>
+                                <small class="error-text"
+                                    *ngIf="complaintForm.get('description')?.errors?.['minlength']">
+                                    Description must be at least 10 characters; currently
+                                    {{complaintForm.get('description')?.errors?.['minlength']?.actualLength}}
+                                </small>
+                                <small class="error-text"
+                                    *ngIf="complaintForm.get('description')?.errors?.['maxlength']">
+                                    Description must be at most 1000 characters
+                                </small>
+                            </div>
+                        </div>
+
+                        <div *ngIf="isError" class="error-msg">
+                            {{errorMsg}}
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Tracking Modal -->
+    <div class="modal-backdrop" *ngIf="activeModal === 'track'" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Track Complaint</h3>
+                <button class="close-btn" (click)="closeModal()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="trackingForm" (ngSubmit)="onTrack()">
+                    <div class="form-group ticket-search-group">
+                        <label for="ticketId">Ticket ID</label>
+                        <div class="search-row">
+                            <input type="text" id="ticketId" formControlName="ticketId" placeholder="Enter Ticket ID" />
+                            <button type="submit" class="btn-primary btn-search">Search</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div *ngIf="trackError" class="error-msg">
+                    {{ trackError }}
+                </div>
+
+                <div *ngIf="trackedTicket" class="ticket-details">
+                    <div class="detail-row">
+                        <span class="label">Ticket ID:</span>
+                        <span class="value">{{ trackedTicket.ticketId }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Booking ID:</span>
+                        <span class="value">{{ trackedTicket.bookingId }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Status:</span>
+                        <span class="value status-badge" [class.open]="trackedTicket.status === 'Open'"
+                            [class.closed]="trackedTicket.status === 'Closed'">
+                            {{ trackedTicket.status }}
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Title:</span>
+                        <span class="value">{{ trackedTicket.title }}</span>
+                    </div>
+                    <div class="detail-row description-row">
+                        <span class="label">Description:</span>
+                        <p class="value description-text">{{ trackedTicket.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-customer-layout>

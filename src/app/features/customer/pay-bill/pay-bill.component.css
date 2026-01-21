@@ -1,0 +1,184 @@
+.page {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    margin: 0 0 1.5rem 0;
+    color: #333;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.info-box {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e0e0e0;
+}
+
+.info-box div {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.error {
+    background: #ffebee;
+    color: #c62828;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border: 1px solid #ef9a9a;
+}
+
+.field {
+    margin-bottom: 1rem;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.field input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.field input:focus {
+    outline: none;
+    border-color: #4caf50;
+}
+
+.field-error {
+    display: block;
+    color: #c62828;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn {
+    width: 100%;
+    padding: 0.875rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: #4caf50;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #388e3c;
+}
+
+.btn-primary:disabled {
+    background: #a5d6a7;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: #757575;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #616161;
+}
+
+.btn-cancel {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-cancel:hover {
+    background: #bdbdbd;
+}
+
+.btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.confirm-section {
+    background: #fff9e6;
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid #ffeb3b;
+    margin-bottom: 1rem;
+}
+
+.confirm-section h3 {
+    margin: 0 0 1rem 0;
+    color: #f57f17;
+    font-size: 1.1rem;
+}
+
+.detail {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail:last-child {
+    border-bottom: none;
+}
+
+.detail span {
+    color: #666;
+}
+
+.detail strong {
+    color: #333;
+}
+
+.success-icon {
+    width: 60px;
+    height: 60px;
+    background: #4caf50;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 1rem;
+}
+
+.receipt {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1.5rem 0;
+}

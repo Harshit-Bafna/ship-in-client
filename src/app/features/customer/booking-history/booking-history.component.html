@@ -1,0 +1,198 @@
+<app-customer-layout>
+    <div class="container">
+        <h2>Previous Bookings</h2>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Booking ID:</label>
+                <input type="text" [(ngModel)]="filterBookingId" (input)="onFilterChange()"
+                    placeholder="Search Booking ID" />
+            </div>
+
+            <div class="filter-group">
+                <label>Date:</label>
+                <input type="date" [(ngModel)]="filterDate" (change)="onFilterChange()" />
+            </div>
+
+            <div class="filter-group">
+                <label>Status:</label>
+                <select [(ngModel)]="filterStatus" (change)="onFilterChange()">
+                    <option value="">All Statuses</option>
+                    <option value="BOOKED">Booked</option>
+                    <option value="PICKED_UP">Picked Up</option>
+                    <option value="IN_TRANSIT">In Transit</option>
+                    <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                    <option value="DELIVERED">Delivered</option>
+                    <option value="CANCELLED">Cancelled</option>
+                    <option value="FAILED_DELIVERY">Failed Delivery</option>
+                </select>
+            </div>
+        </div>
+
+        @if (showDownloadOptions) {
+        <div class="download-actions">
+            <button (click)="downloadExcel()" class="btn-download excel">
+                Download Excel
+            </button>
+            <button (click)="downloadPDF()" class="btn-download pdf">
+                Download PDF
+            </button>
+        </div>
+        }
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Booking Date</th>
+                        <th>Receiver Name</th>
+                        <th>Delivery Address</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (booking of displayedBookings; track booking) {
+                    <tr>
+                        <td>{{ booking.trakingId }}</td>
+                        <td>{{ booking.bookingDate | date:'yyyy-MM-dd' }}</td>
+                        <td>{{ booking.receiverName }}</td>
+                        <td>{{ booking.deliveryAddress }}</td>
+                        <td>Rs. {{ booking.amount }}</td>
+                        <td>
+                            <span class="status-badge" [ngClass]="
+                                    booking.bookingStatus
+                                        .toLowerCase()
+                                        .replace(' ', '-')
+                                ">
+                                {{ booking.bookingStatus }}
+                            </span>
+                        </td>
+                        <td class="actions-cell">
+                            @if ( booking.bookingStatus === deliveredStatus &&
+                            !booking.hasFeedback ) {
+                            <button (click)="openFeedbackModal(booking)" class="btn-feedback">
+                                Add Feedback
+                            </button>
+                            } @if (booking.hasFeedback) {
+                            <span class="feedback-submitted">Submitted</span>
+                            }
+
+                            <button type="button" class="menu-trigger" aria-label="More options"
+                                (click)="toggleMenu($event, booking.trakingId)">
+                                ⋮
+                            </button>
+
+                            @if (openMenuId === booking.trakingId) {
+                            <div class="menu-panel">
+                                <button type="button" class="menu-item" (click)="onViewBookingDetails(booking)">
+                                    View Booking Details
+                                </button>
+
+                                @if ( booking.bookingStatus !== deliveredStatus &&
+                                booking.bookingStatus !== cancelledStatus ) {
+                                <button type="button" class="menu-item" (click)="onCancelBooking(booking)">
+                                    Cancel Parcel Booking
+                                </button>
+                                } @if ( booking.bookingStatus !== deliveredStatus &&
+                                !isPaymentCompleted(booking) ) {
+                                <button type="button" class="menu-item" (click)="onPayBill(booking)">
+                                    Pay Bill
+                                </button>
+                                }
+
+                                <button type="button" class="menu-item" (click)="onDownloadInvoice(booking)">
+                                    Download Invoice
+                                </button>
+                            </div>
+                            }
+                        </td>
+                    </tr>
+                    } @if (displayedBookings.length === 0) {
+                    <tr>
+                        <td colspan="8" class="no-data">
+                            No bookings found matching criteria.
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">
+                Previous
+            </button>
+            <span>Page {{ currentPage }} of {{ totalPages }}</span>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+                Next
+            </button>
+        </div>
+
+        @if (isFeedbackModalOpen) {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Parcel Feedback</h3>
+
+                @if (selectedBooking) {
+                <div class="booking-details">
+                    <p>
+                        <strong>Booking ID:</strong>
+                        {{ selectedBooking.trakingId }}
+                    </p>
+                    <p>
+                        <strong>Date:</strong>
+                        {{ selectedBooking.bookingDate }}
+                    </p>
+                    <p>
+                        <strong>Receiver:</strong>
+                        {{ selectedBooking.receiverName }}
+                    </p>
+                    <p>
+                        <strong>Address:</strong>
+                        {{ selectedBooking.deliveryAddress }}
+                    </p>
+                </div>
+                }
+
+                <div class="form-group">
+                    <label>Rate your experience (Mandatory):</label>
+                    <div class="star-rating">
+                        @for (star of [1, 2, 3, 4, 5]; track star) {
+                        <span (click)="setRating(star)" [class.filled]="star <= feedbackRating">★</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Suggestion (Optional):</label>
+                    <textarea [(ngModel)]="feedbackSuggestion" rows="3" placeholder="Leave a comment..."></textarea>
+                </div>
+
+                @if (feedbackError) {
+                <div class="error-message">
+                    {{ feedbackError }}
+                </div>
+                } @if (feedbackSuccess) {
+                <div class="success-message">
+                    {{ feedbackSuccess }}
+                </div>
+                }
+
+                <div class="modal-actions">
+                    <button (click)="submitFeedback()" class="btn-submit" [disabled]="!!feedbackSuccess">
+                        Submit
+                    </button>
+                    <button (click)="closeFeedbackModal()" class="btn-cancel">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+        } @if (openMenuId) {
+        <div class="menu-backdrop" (click)="closeMenu()"></div>
+        }
+    </div>
+</app-customer-layout>
