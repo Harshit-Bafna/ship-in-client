@@ -17,6 +17,7 @@ export class OfficerLayoutComponent {
         { label: 'New Booking', route: '/officer/new-booking' },
         { label: 'Track Shipment', route: '/officer/tracking' },
         { label: 'Pickup Shipment', route: '/officer/pickup' },
+        { label: 'Drop Shipment', route: '/officer/dropOff' },
         { label: 'Booking History', route: '/officer/history' },
     ]);
 

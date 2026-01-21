@@ -1,16 +1,16 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OfficerLayoutComponent } from "../../../layout/main-layout/officer-layout/officer-layout.component";
+import { OfficerLayoutComponent } from '../../../layout/main-layout/officer-layout/officer-layout.component';
 
 @Component({
-    selector: 'app-pick-up',
+    selector: 'app-drop-off',
     standalone: true,
     imports: [CommonModule, FormsModule, OfficerLayoutComponent],
-    templateUrl: './pick-up.component.html',
-    styleUrl: './pick-up.component.css',
+    templateUrl: './drop-off.component.html',
+    styleUrl: './drop-off.component.css',
 })
-export class PickUpComponent {
+export class DropOffComponent {
     bookingId = signal('');
     isLoading = signal(false);
 
@@ -52,13 +52,13 @@ export class PickUpComponent {
         }, 1000);
     }
 
-    pickUpParcel() {
+    dropOffParcel() {
         this.errorMessage.set('');
         this.successMessage.set('');
 
         // 🔌 Backend integration point
         setTimeout(() => {
-            this.successMessage.set('Parcel picked up successfully.');
+            this.successMessage.set('Parcel dropped off successfully.');
         }, 500);
     }
 }

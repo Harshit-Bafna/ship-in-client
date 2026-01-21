@@ -1,7 +1,6 @@
-.pickup-container {
+.dropoff-container {
     padding: 16px;
     font-family: Arial, sans-serif;
-    background-color: white;
 }
 
 /* Card */
@@ -127,6 +126,6 @@
     font-weight: 500;
 }
 
-.pickup-btn {
+.dropoff-btn {
     margin-top: 16px;
 }

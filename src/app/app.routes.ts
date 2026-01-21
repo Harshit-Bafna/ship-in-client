@@ -16,8 +16,9 @@ import { OfficerTrackingComponent } from './features/officer/tracking/tracking.c
 import { PayBillComponent } from './features/customer/pay-bill/pay-bill.component';
 import { BookParcelComponent } from './features/customer/book-parcel/book-parcel.component';
 import { OfficerBookParcelComponent } from './features/officer/new-booking/book-parcel.component';
-import { PickUpComponent } from './features/officer/pick-up/pick-up.component';
 import { StaffSupportComponent } from './features/staff/support/staff-support.component';
+import { PickUpComponent } from './features/officer/pick-up/pick-up.component';
+import { DropOffComponent } from './features/officer/drop-off/drop-off.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -94,6 +95,12 @@ export const routes: Routes = [
     {
         path: 'officer/pickup',
         component: PickUpComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: [EUserRole.OFFICER] },
+    },
+    {
+        path: 'officer/dropOff',
+        component: DropOffComponent,
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: [EUserRole.OFFICER] },
     },
